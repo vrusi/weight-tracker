@@ -1,0 +1,265 @@
+<title>Weight Tracker — 81.25 → 73.1 kg</title>
+<style>
+  :root {
+    --surface: #F8FAFA;
+    --card: #FFFFFF;
+    --ink: #1F2A2C;
+    --ink-2: #52646A;
+    --ink-3: #8CA0A4;
+    --line: #E2E9EA;
+    --accent: #0891B2;
+    --accent-soft: rgba(8, 145, 178, 0.10);
+    --target: #9AA7A9;
+    --good-bg: #E5F3EC; --good-ink: #14603F;
+    --warn-bg: #FBEEDC; --warn-ink: #8A4B06;
+    --tile-shadow: 0 1px 2px rgba(31, 42, 44, 0.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --surface: #141B1C;
+      --card: #1B2426;
+      --ink: #E6EDEE;
+      --ink-2: #9FB2B5;
+      --ink-3: #64797D;
+      --line: #2A3639;
+      --accent: #0AA2C0;
+      --accent-soft: rgba(10, 162, 192, 0.14);
+      --target: #5E7175;
+      --good-bg: #16352A; --good-ink: #7FD1AB;
+      --warn-bg: #3B2C15; --warn-ink: #E8B87A;
+      --tile-shadow: none;
+    }
+  }
+  :root[data-theme="light"] {
+    --surface: #F8FAFA; --card: #FFFFFF; --ink: #1F2A2C; --ink-2: #52646A;
+    --ink-3: #8CA0A4; --line: #E2E9EA; --accent: #0891B2;
+    --accent-soft: rgba(8, 145, 178, 0.10); --target: #9AA7A9;
+    --good-bg: #E5F3EC; --good-ink: #14603F; --warn-bg: #FBEEDC; --warn-ink: #8A4B06;
+    --tile-shadow: 0 1px 2px rgba(31, 42, 44, 0.06);
+  }
+  :root[data-theme="dark"] {
+    --surface: #141B1C; --card: #1B2426; --ink: #E6EDEE; --ink-2: #9FB2B5;
+    --ink-3: #64797D; --line: #2A3639; --accent: #0AA2C0;
+    --accent-soft: rgba(10, 162, 192, 0.14); --target: #5E7175;
+    --good-bg: #16352A; --good-ink: #7FD1AB; --warn-bg: #3B2C15; --warn-ink: #E8B87A;
+    --tile-shadow: none;
+  }
+  html { background: var(--surface); }
+  body {
+    font-family: "Avenir Next", "Segoe UI", system-ui, sans-serif;
+    color: var(--ink);
+    margin: 0;
+    padding: 32px 20px 56px;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; }
+  header { margin-bottom: 28px; }
+  .eyebrow {
+    font-size: 12px; letter-spacing: 0.09em; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin: 0 0 6px;
+  }
+  h1 {
+    font-size: clamp(24px, 4vw, 32px); font-weight: 600; margin: 0;
+    letter-spacing: -0.015em; text-wrap: balance;
+  }
+  .sub { color: var(--ink-2); margin: 8px 0 0; font-size: 15px; }
+  .sub strong { color: var(--ink); font-weight: 600; }
+
+  .tiles {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px; margin: 24px 0;
+  }
+  .tile {
+    background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+    padding: 14px 16px; box-shadow: var(--tile-shadow);
+  }
+  .tile .label {
+    font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 600; margin-bottom: 6px;
+  }
+  .tile .value {
+    font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em; line-height: 1.1;
+  }
+  .tile .unit { font-size: 14px; color: var(--ink-2); font-weight: 500; }
+  .tile .delta { font-size: 12px; color: var(--ink-2); margin-top: 4px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    border-radius: 999px; padding: 5px 12px; font-size: 13px; font-weight: 600;
+    margin-top: 3px;
+  }
+  .pill.good { background: var(--good-bg); color: var(--good-ink); }
+  .pill.warn { background: var(--warn-bg); color: var(--warn-ink); }
+
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 20px; box-shadow: var(--tile-shadow);
+  }
+  .card h2 { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
+  .card .note { font-size: 13px; color: var(--ink-2); margin: 0 0 14px; }
+  .chartbox { position: relative; }
+  #chart { width: 100%; height: auto; display: block; }
+  #tip {
+    position: absolute; pointer-events: none; display: none;
+    background: var(--ink); color: var(--surface);
+    border-radius: 8px; padding: 8px 11px; font-size: 12.5px; line-height: 1.5;
+    white-space: nowrap; transform: translate(-50%, -110%);
+    font-variant-numeric: tabular-nums;
+  }
+  #tip .d { opacity: 0.75; }
+
+  table {
+    width: 100%; border-collapse: collapse; font-size: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+  th {
+    text-align: left; font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 600; padding: 8px 10px;
+    border-bottom: 1px solid var(--line);
+  }
+  td { padding: 8px 10px; border-bottom: 1px solid var(--line); color: var(--ink-2); }
+  td:first-child { color: var(--ink); }
+  th.num, td.num { text-align: right; }
+  .tablewrap { overflow-x: auto; margin-top: 24px; }
+  footer { margin-top: 28px; font-size: 13px; color: var(--ink-3); }
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Weight tracker</p>
+    <h1>81.25 → 73.1 kg by 20 Nov 2026</h1>
+    <p class="sub">Target pace <strong>−0.47 kg/week</strong> · intake <strong>~1800 kcal</strong> · protein <strong>~130 g/day</strong></p>
+  </header>
+
+  <div class="tiles" id="tiles"></div>
+
+  <div class="card">
+    <h2>Trend vs target</h2>
+    <p class="note">Dots are daily weigh-ins (noise). The teal line is the 7-day average (signal). Stay near the dashed target line.</p>
+    <div class="chartbox">
+      <svg id="chart" viewBox="0 0 940 430" role="img" aria-label="Weight trend versus target line"></svg>
+      <div id="tip"></div>
+    </div>
+  </div>
+
+  <div class="tablewrap card">
+    <h2>Log</h2>
+    <table id="logtable">
+      <thead><tr><th>Date</th><th class="num">Weight (kg)</th><th class="num">7-day avg</th><th class="num">Target</th><th>Notes</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <footer>Updated 20 Jul 2026 · Source: ~/weight-tracker/log.csv</footer>
+</div>
+
+<script>
+// ===== DATA — append new entries here (date, weight kg, optional note) =====
+const DATA = [
+  { d: "2026-07-20", w: 81.25, note: "start" },
+];
+// ==========================================================================
+
+const START = { d: "2026-07-20", w: 81.25 };
+const GOAL  = { d: "2026-11-20", w: 73.12 };
+
+const day = 86400000;
+const t0 = Date.parse(START.d), t1 = Date.parse(GOAL.d);
+const targetAt = t => START.w + (GOAL.w - START.w) * (t - t0) / (t1 - t0);
+const fmtD = t => new Date(t).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+
+// 7-day rolling average of available entries
+const entries = DATA.map(e => ({ ...e, t: Date.parse(e.d) })).sort((a, b) => a.t - b.t);
+entries.forEach((e, i) => {
+  const win = entries.filter(x => x.t > e.t - 7 * day && x.t <= e.t);
+  e.avg = win.reduce((s, x) => s + x.w, 0) / win.length;
+});
+const last = entries[entries.length - 1];
+
+// ---- tiles ----
+const lost = START.w - last.w;
+const avgVsTarget = last.avg - targetAt(last.t);
+const onTrack = avgVsTarget <= 0.3;
+document.getElementById("tiles").innerHTML = `
+  <div class="tile"><div class="label">Current</div>
+    <div class="value">${last.w.toFixed(1)}<span class="unit"> kg</span></div>
+    <div class="delta">${fmtD(last.t)}</div></div>
+  <div class="tile"><div class="label">7-day avg</div>
+    <div class="value">${last.avg.toFixed(1)}<span class="unit"> kg</span></div>
+    <div class="delta">target now: ${targetAt(last.t).toFixed(1)} kg</div></div>
+  <div class="tile"><div class="label">Lost</div>
+    <div class="value">${lost.toFixed(1)}<span class="unit"> kg</span></div>
+    <div class="delta">of ${(START.w - GOAL.w).toFixed(1)} kg goal</div></div>
+  <div class="tile"><div class="label">Pace</div>
+    <div class="pill ${onTrack ? "good" : "warn"}">${onTrack ? "✓ on track" : "▲ behind"}</div>
+    <div class="delta">${avgVsTarget >= 0 ? "+" : ""}${avgVsTarget.toFixed(1)} kg vs target</div></div>`;
+
+// ---- chart ----
+const svg = document.getElementById("chart");
+const W = 940, H = 430, M = { l: 46, r: 18, t: 16, b: 34 };
+const yMin = 72, yMax = 82.5;
+const x = t => M.l + (W - M.l - M.r) * (t - t0) / (t1 - t0);
+const y = w => M.t + (H - M.t - M.b) * (1 - (w - yMin) / (yMax - yMin));
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+let s = "";
+
+// gridlines + y labels (every 2 kg)
+for (let g = 72; g <= 82; g += 2) {
+  s += `<line x1="${M.l}" y1="${y(g)}" x2="${W - M.r}" y2="${y(g)}" stroke="var(--line)" stroke-width="1"/>`;
+  s += `<text x="${M.l - 8}" y="${y(g) + 4}" text-anchor="end" font-size="12" fill="var(--ink-3)">${g}</text>`;
+}
+// x labels (month starts)
+["2026-07-20", "2026-08-01", "2026-09-01", "2026-10-01", "2026-11-01", "2026-11-20"].forEach(d => {
+  const t = Date.parse(d);
+  s += `<text x="${x(t)}" y="${H - 10}" text-anchor="middle" font-size="12" fill="var(--ink-3)">${fmtD(t)}</text>`;
+});
+// target line + goal marker
+s += `<line x1="${x(t0)}" y1="${y(START.w)}" x2="${x(t1)}" y2="${y(GOAL.w)}" stroke="var(--target)" stroke-width="2" stroke-dasharray="6 5"/>`;
+s += `<text x="${x(t1) - 6}" y="${y(GOAL.w) - 10}" text-anchor="end" font-size="12" fill="var(--ink-2)">target 73.1</text>`;
+s += `<circle cx="${x(t1)}" cy="${y(GOAL.w)}" r="4" fill="none" stroke="var(--target)" stroke-width="2"/>`;
+
+// daily dots (faint) — the noise
+entries.forEach(e => {
+  s += `<circle cx="${x(e.t)}" cy="${y(e.w)}" r="3.5" fill="var(--accent)" opacity="0.35"/>`;
+});
+// 7-day avg line — the signal
+if (entries.length > 1) {
+  const pts = entries.map(e => `${x(e.t)},${y(e.avg)}`).join(" ");
+  s += `<polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+}
+// emphasized endpoint + direct label
+s += `<circle cx="${x(last.t)}" cy="${y(last.avg)}" r="5" fill="var(--accent)" stroke="var(--card)" stroke-width="2"/>`;
+s += `<text x="${x(last.t) + 9}" y="${y(last.avg) + 4}" font-size="12.5" font-weight="600" fill="var(--ink)">${last.avg.toFixed(1)}</text>`;
+// crosshair (hidden until hover)
+s += `<line id="xhair" x1="0" y1="${M.t}" x2="0" y2="${H - M.b}" stroke="var(--ink-3)" stroke-width="1" opacity="0" pointer-events="none"/>`;
+s += `<rect x="${M.l}" y="${M.t}" width="${W - M.l - M.r}" height="${H - M.t - M.b}" fill="transparent" id="hover"/>`;
+svg.innerHTML = s;
+
+// hover: nearest entry, else target readout
+const tip = document.getElementById("tip");
+const xhair = document.getElementById("xhair");
+const box = document.querySelector(".chartbox");
+document.getElementById("hover").addEventListener("mousemove", ev => {
+  const r = svg.getBoundingClientRect();
+  const t = t0 + (t1 - t0) * ((ev.clientX - r.left) / r.width * W - M.l) / (W - M.l - M.r);
+  const near = entries.reduce((a, b) => Math.abs(b.t - t) < Math.abs(a.t - t) ? b : a);
+  const useEntry = Math.abs(near.t - t) < 3 * day;
+  const tt = useEntry ? near.t : t;
+  xhair.setAttribute("x1", x(tt)); xhair.setAttribute("x2", x(tt));
+  xhair.setAttribute("opacity", "0.4");
+  tip.style.display = "block";
+  tip.style.left = (x(tt) / W * r.width) + "px";
+  tip.style.top = (M.t / H * r.height) + "px";
+  tip.innerHTML = useEntry
+    ? `<span class="d">${fmtD(near.t)}</span><br>weight ${near.w.toFixed(1)} kg · avg ${near.avg.toFixed(1)}<br><span class="d">target ${targetAt(near.t).toFixed(1)} kg</span>`
+    : `<span class="d">${fmtD(tt)}</span><br><span class="d">target ${targetAt(tt).toFixed(1)} kg</span>`;
+});
+document.getElementById("hover").addEventListener("mouseleave", () => {
+  tip.style.display = "none"; xhair.setAttribute("opacity", "0");
+});
+
+// ---- table (newest first) ----
+document.querySelector("#logtable tbody").innerHTML = [...entries].reverse().map(e => `
+  <tr><td>${fmtD(e.t)}</td><td class="num">${e.w.toFixed(2)}</td>
+  <td class="num">${e.avg.toFixed(2)}</td><td class="num">${targetAt(e.t).toFixed(2)}</td>
+  <td>${e.note || ""}</td></tr>`).join("");
+</script>
