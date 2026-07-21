@@ -11,6 +11,8 @@ Add new items as they come up.
 | Emco protein stick, chocolate & almond ("orechy protein cokolada a mandle") | 1 stick (~45 g) | 175 | 10 |
 | Billa protein sandwich | 1 pack | 350 | 25 |
 | Monster Energy | 1 can (500 ml) | 210 | 0 |
+| Norwegian salmon plate (200 g) w/ potato & green pea puree, salad | 1 serving | 700 | 40 |
+| Pilsner beer (Plzen) | 500 ml | 215 | 2 |
 | Tomato | 1 medium (~120 g) | 22 | 1 |
 | Carrot | 1 medium (~60 g) | 25 | 1 |
 
