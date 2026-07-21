@@ -165,7 +165,7 @@
   <div class="tablewrap card">
     <h2>Log</h2>
     <table id="logtable">
-      <thead><tr><th>Date</th><th class="num">Weight (kg)</th><th class="num">7-day avg</th><th class="num">Target</th><th>Notes</th></tr></thead>
+      <thead><tr><th>Date</th><th class="num">Weight (kg)</th><th class="num">7-day avg</th><th class="num">Target</th><th class="num">kcal</th><th class="num">Protein</th><th>Notes</th></tr></thead>
       <tbody></tbody>
     </table>
   </div>
@@ -184,8 +184,9 @@ async function loadCsv() {
     const p = line.split(",");
     const e = { d: (p[0] || "").trim(), w: parseFloat(p[1]) };
     if (p[2] && p[2].trim() !== "") e.cal = parseFloat(p[2]);
-    if (p[3] && p[3].trim() !== "") e.steps = parseFloat(p[3]);
-    const note = p.slice(4).join(",").trim();
+    if (p[3] && p[3].trim() !== "") e.protein = parseFloat(p[3]);
+    if (p[4] && p[4].trim() !== "") e.steps = parseFloat(p[4]);
+    const note = p.slice(5).join(",").trim();
     if (note) e.note = note;
     return e;
   }).filter(e => e.d && !isNaN(e.w));
@@ -240,6 +241,8 @@ const weeklyChange = weekAgo ? last.avg - weekAgo.avg : null;
 const last7 = entries.filter(e => e.t > last.t - 7 * day && e.t <= last.t);
 const calE = last7.filter(e => e.cal != null && e.cal !== "" && !isNaN(e.cal));
 const avgCal = calE.length ? calE.reduce((s, e) => s + +e.cal, 0) / calE.length : null;
+const protE = last7.filter(e => e.protein != null && !isNaN(e.protein));
+const avgProt = protE.length ? protE.reduce((s, e) => s + +e.protein, 0) / protE.length : null;
 
 // TDEE recalc from current 7-day-avg weight (Mifflin-St Jeor, female, 169 cm, 28y, ×1.5, −525 deficit)
 const bmr = 10 * last.avg + 6.25 * 169 - 5 * 28 - 161;
@@ -259,9 +262,9 @@ document.getElementById("review").innerHTML = `
   <div class="rstat"><div class="rlabel">Vs target line</div><div class="rval">${avgVsTarget >= 0 ? "+" : ""}${avgVsTarget.toFixed(1)} kg</div>
     <div class="rsub">${avgVsTarget <= 0.3 ? "at or ahead of pace" : "behind pace"}</div></div>
   <div class="rstat"><div class="rlabel">Avg intake (7d)</div><div class="rval">${calStr}</div>
-    <div class="rsub">${avgCal == null ? "no calories logged" : `${calE.length} of ${last7.length} days logged`}</div></div>
-  <div class="rstat"><div class="rlabel">Intake target</div><div class="rval">${intakeTarget} kcal</div>
-    <div class="rsub">recalc at ${last.avg.toFixed(1)} kg</div></div>
+    <div class="rsub">${avgCal == null ? "no calories logged" : `target ${intakeTarget} kcal`}</div></div>
+  <div class="rstat"><div class="rlabel">Avg protein (7d)</div><div class="rval">${avgProt == null ? "—" : Math.round(avgProt) + " g"}</div>
+    <div class="rsub">${avgProt == null ? "not logged" : `target 130 g${avgProt < 110 ? " · low" : ""}`}</div></div>
   <div class="rstat" style="grid-column: 1 / -1"><div class="rlabel">Status</div>
     <div class="pill ${flagCls}">${flagCls === "good" ? "✓" : "▲"} ${flag}</div></div>`;
 
@@ -333,6 +336,8 @@ document.getElementById("hover").addEventListener("mouseleave", () => {
 document.querySelector("#logtable tbody").innerHTML = [...entries].reverse().map(e => `
   <tr><td>${fmtD(e.t)}</td><td class="num">${e.w.toFixed(2)}</td>
   <td class="num">${e.avg.toFixed(2)}</td><td class="num">${targetAt(e.t).toFixed(2)}</td>
+  <td class="num">${e.cal != null ? Math.round(e.cal) : "—"}</td>
+  <td class="num">${e.protein != null ? Math.round(e.protein) : "—"}</td>
   <td>${e.note || ""}</td></tr>`).join("");
 </script>
 </body>

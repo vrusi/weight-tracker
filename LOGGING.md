@@ -14,7 +14,15 @@ The dashboard (`index.html`) reads `log.csv` live on every load, so **the only t
 Append the row to `log.csv`, commit, and push. Then reply with one terse line: current weight, 7-day rolling average, target weight for today, and the gap (avg − target).
 
 ## Column format
-`date,weight_kg,calories,steps,notes` — date is `YYYY-MM-DD`. Calories/steps/notes optional; avoid commas inside notes (use `;`).
+`date,weight_kg,calories,protein_g,steps,notes` — date is `YYYY-MM-DD`. Only date + weight required; others optional; avoid commas inside notes (use `;`).
+
+## Natural-language & photo logging (preferred)
+Veronika will usually message food in plain language ("had a Billa protein sandwich and 2 scoops of protein") or send a photo of a meal. Steps for a Claude session with repo write access:
+1. Identify each food. Check `foods.md` first for known items and their macro estimates — reuse those numbers for consistency. For "2 scoops of protein" with no brand, use her default from foods.md.
+2. For a photo, estimate portion and macros from what's visible; note it's a photo estimate.
+3. Sum calories and protein for the day. Append/update today's `log.csv` row with the totals; put a short food list in notes.
+4. Add any new food to `foods.md` with its estimate so it's consistent next time.
+5. Commit + push. Reply terse: weight, 7-day avg, target for today, gap, plus calories & protein so far vs targets (1800 kcal / 130 g).
 
 ## Goal context
 - Start 81.25 kg (2026-07-20) → target 73.1 kg by 2026-11-20 (~0.47 kg/week).
