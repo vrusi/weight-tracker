@@ -13,6 +13,7 @@ Add new items as they come up.
 | Monster Energy | 1 can (500 ml) | 210 | 0 |
 | Norwegian salmon plate (200 g) w/ potato & green pea puree, salad | 1 serving | 700 | 40 |
 | Pilsner beer (Plzen) | 500 ml | 215 | 2 |
+| White wine | 1 glass (150 ml) | 120 | 0 |
 | Tomato | 1 medium (~120 g) | 22 | 1 |
 | Carrot | 1 medium (~60 g) | 25 | 1 |
 
