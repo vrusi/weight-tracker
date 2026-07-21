@@ -144,6 +144,14 @@
   .tcard .tsub { font-size: 12.5px; color: var(--ink-2); margin-top: 6px; }
   .tcard.over .tval { color: var(--warn-ink); }
   .tcard.good .tval { color: var(--good-ink); }
+  details summary { cursor: pointer; font-size: 13px; color: var(--ink-2); margin-top: 14px; }
+  pre#rawcsv {
+    overflow-x: auto; margin-top: 12px; padding: 12px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px;
+    line-height: 1.6; color: var(--ink-2);
+  }
+  .issues { margin: 12px 0 0; padding-left: 18px; color: var(--warn-ink); font-size: 13px; line-height: 1.6; }
 </style>
 </head>
 <body>
@@ -182,6 +190,13 @@
     </table>
   </div>
 
+  <div class="card">
+    <h2>Data check</h2>
+    <p class="note">Validates every row so bad data can't hide. Expand the raw log to eyeball it.</p>
+    <div id="datacheck"></div>
+    <details><summary>Show raw log.csv</summary><pre id="rawcsv"></pre></details>
+  </div>
+
   <footer>Updated 20 Jul 2026 · Source: ~/weight-tracker/log.csv</footer>
 </div>
 
@@ -189,21 +204,24 @@
 // ===== Data comes straight from log.csv — the single source of truth. =====
 // To log: append one line to log.csv (date,weight_kg,calories,steps,notes).
 // The dashboard reads it live on every load. No DATA array to maintain.
-async function loadCsv() {
+async function fetchCsv() {
   const res = await fetch("log.csv?t=" + Date.now(), { cache: "no-store" });
-  const text = await res.text();
-  return text.trim().split("\n").slice(1).filter(Boolean).map(line => {
-    const p = line.split(",");
-    const e = { d: (p[0] || "").trim(), w: parseFloat(p[1]) };
-    if (p[2] && p[2].trim() !== "") e.cal = parseFloat(p[2]);
-    if (p[3] && p[3].trim() !== "") e.protein = parseFloat(p[3]);
-    if (p[4] && p[4].trim() !== "") e.steps = parseFloat(p[4]);
-    const note = p.slice(5).join(",").trim();
-    if (note) e.note = note;
-    return e;
-  }).filter(e => e.d && !isNaN(e.w));
+  return await res.text();
 }
-const DATA = await loadCsv();
+const CSV_TEXT = await fetchCsv();
+const rawLines = CSV_TEXT.replace(/\s+$/, "").split("\n");
+const dataLines = rawLines.slice(1).filter(l => l.trim());
+function parseLine(line) {
+  const p = line.split(",");
+  const e = { d: (p[0] || "").trim(), w: parseFloat(p[1]) };
+  if (p[2] && p[2].trim() !== "") e.cal = parseFloat(p[2]);
+  if (p[3] && p[3].trim() !== "") e.protein = parseFloat(p[3]);
+  if (p[4] && p[4].trim() !== "") e.steps = parseFloat(p[4]);
+  const note = p.slice(5).join(",").trim();
+  if (note) e.note = note;
+  return e;
+}
+const DATA = dataLines.map(parseLine).filter(e => e.d && !isNaN(e.w));
 // ==========================================================================
 
 const START = { d: "2026-07-20", w: 81.25 };
@@ -372,6 +390,34 @@ document.querySelector("#logtable tbody").innerHTML = [...entries].reverse().map
   <td class="num">${e.cal != null ? Math.round(e.cal) : "—"}</td>
   <td class="num">${e.protein != null ? Math.round(e.protein) : "—"}</td>
   <td>${e.note || ""}</td></tr>`).join("");
+
+// ---- data check (flags messy rows the parser would otherwise drop) ----
+function checkRows(lines) {
+  const issues = [], seen = {};
+  lines.forEach((line, idx) => {
+    const ln = idx + 2; // +2: header is line 1, arrays are 0-based
+    const p = line.split(",");
+    const d = (p[0] || "").trim();
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) issues.push(`Line ${ln}: bad date "${d}"`);
+    else if (seen[d]) issues.push(`Line ${ln}: duplicate date ${d}`);
+    if (d) seen[d] = true;
+    const w = parseFloat(p[1]);
+    if (p[1] == null || p[1].trim() === "" || isNaN(w)) issues.push(`Line ${ln}: weight not a number ("${(p[1] || "").trim()}")`);
+    else if (w < 40 || w > 150) issues.push(`Line ${ln}: weight ${w} kg looks wrong (out of 40–150)`);
+    [["calories", 2], ["protein", 3], ["steps", 4]].forEach(([name, i]) => {
+      const v = (p[i] || "").trim();
+      if (v !== "" && isNaN(parseFloat(v))) issues.push(`Line ${ln}: ${name} not a number ("${v}")`);
+    });
+    if (p.length < 5) issues.push(`Line ${ln}: only ${p.length} columns (expected 6)`);
+  });
+  return issues;
+}
+const issues = checkRows(dataLines);
+document.getElementById("datacheck").innerHTML = issues.length
+  ? `<div class="pill warn">▲ ${issues.length} issue${issues.length > 1 ? "s" : ""} found</div>
+     <ul class="issues">${issues.map(i => `<li>${i}</li>`).join("")}</ul>`
+  : `<div class="pill good">✓ ${dataLines.length} row${dataLines.length > 1 ? "s" : ""}, no issues</div>`;
+document.getElementById("rawcsv").textContent = CSV_TEXT.replace(/\s+$/, "");
 </script>
 </body>
 </html>
