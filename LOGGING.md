@@ -20,7 +20,7 @@ Append the row to `log.csv`, commit, and push. Then reply with one terse line: c
 Veronika will usually message food in plain language ("had a Billa protein sandwich and 2 scoops of protein") or send a photo of a meal. Steps for a Claude session with repo write access:
 1. Identify each food. Check `foods.md` first for known items and their macro estimates — reuse those numbers for consistency. For "2 scoops of protein" with no brand, use her default from foods.md.
 2. For a photo, estimate portion and macros from what's visible; note it's a photo estimate.
-3. Sum calories and protein for the day. Append/update today's `log.csv` row with the totals; put a short food list in notes.
+3. Running daily tally — she messages food multiple times a day. If today's row already exists in `log.csv`, ADD the new food's calories and protein to the existing totals (don't overwrite, don't add a duplicate row) and append the new items to the notes list. If today has no row yet, create it. Weight is set once from the morning weigh-in; later food messages leave weight unchanged.
 4. Add any new food to `foods.md` with its estimate so it's consistent next time.
 5. Commit + push. Reply terse: weight, 7-day avg, target for today, gap, plus calories & protein so far vs targets (1800 kcal / 130 g).
 
