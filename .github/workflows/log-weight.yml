@@ -1,0 +1,45 @@
+name: Log weight from Apple Health
+
+on:
+  repository_dispatch:
+    types: [log-weight]
+  workflow_dispatch:
+    inputs:
+      weight:
+        description: "Weight in kg (e.g. 79.95)"
+        required: true
+      date:
+        description: "Date YYYY-MM-DD (blank = today)"
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: log-csv
+  cancel-in-progress: false
+
+jobs:
+  log:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Upsert weight into log.csv
+        env:
+          PAYLOAD: ${{ toJSON(github.event.client_payload) }}
+          WEIGHT: ${{ github.event.inputs.weight }}
+          DATE: ${{ github.event.inputs.date }}
+        run: python3 scripts/log_weight.py
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "weight-bot"
+          git config user.email "29240026+vrusi@users.noreply.github.com"
+          git add log.csv
+          if git diff --cached --quiet; then
+            echo "No change."
+          else
+            git commit -m "log: weight via Apple Health"
+            git push
+          fi
