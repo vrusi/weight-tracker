@@ -22,7 +22,7 @@ Veronika will usually message food in plain language ("had a Billa protein sandw
 2. For a photo, estimate portion and macros from what's visible; note it's a photo estimate.
 3. Running daily tally — she messages food multiple times a day. If today's row already exists in `log.csv`, ADD the new food's calories and protein to the existing totals (don't overwrite, don't add a duplicate row) and append the new items to the notes list. If today has no row yet, create it. Weight is set once from the morning weigh-in; later food messages leave weight unchanged.
 4. Add any new food to `foods.md` with its estimate so it's consistent next time.
-5. Commit + push. Reply terse: weight, 7-day avg, target for today, gap, plus calories & protein so far vs targets (1800 kcal / 130 g).
+5. Commit + push. Reply terse, and always end with what's LEFT today: `X kcal left, Y g protein left` (target ~1800 kcal from the recalc / 130 g protein, minus today's running totals). On a morning weigh-in also give: 7-day avg, target for today, gap.
 
 ## Goal context
 - Start 81.25 kg (2026-07-20) → target 73.1 kg by 2026-11-20 (~0.47 kg/week).

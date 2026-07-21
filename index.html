@@ -134,6 +134,16 @@
   }
   .rstat .rval { font-size: 19px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
   .rstat .rsub { font-size: 12px; color: var(--ink-2); margin-top: 3px; }
+  .today { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 22px 0 4px; }
+  .tcard { background: var(--accent-soft); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
+  .tcard .tlabel {
+    font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase;
+    color: var(--ink-2); font-weight: 600; margin-bottom: 6px;
+  }
+  .tcard .tval { font-size: 30px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; line-height: 1; color: var(--accent); }
+  .tcard .tsub { font-size: 12.5px; color: var(--ink-2); margin-top: 6px; }
+  .tcard.over .tval { color: var(--warn-ink); }
+  .tcard.good .tval { color: var(--good-ink); }
 </style>
 </head>
 <body>
@@ -144,6 +154,8 @@
     <h1>81.25 → 73.1 kg by 20 Nov 2026</h1>
     <p class="sub">Target pace <strong>−0.47 kg/week</strong> · intake <strong>~1800 kcal</strong> · protein <strong>~130 g/day</strong></p>
   </header>
+
+  <div class="today" id="today"></div>
 
   <div class="tiles" id="tiles"></div>
 
@@ -212,6 +224,27 @@ const last = entries[entries.length - 1];
 
 document.querySelector("footer").textContent =
   `Updated ${fmtD(last.t)} · ${entries.length} ${entries.length === 1 ? "entry" : "entries"} logged`;
+
+// ---- remaining today ----
+const PROT_TARGET = 130;
+const now = new Date();
+const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+const todayE = last.d === todayStr ? last : null;
+// intake target from current 7-day-avg weight (same recalc as the review panel)
+const _bmr = 10 * last.avg + 6.25 * 169 - 5 * 28 - 161;
+const _intakeTarget = Math.round((_bmr * 1.5 - 525) / 10) * 10;
+const calIn = todayE && todayE.cal != null ? todayE.cal : 0;
+const protIn = todayE && todayE.protein != null ? todayE.protein : 0;
+const calLeft = _intakeTarget - calIn;
+const protLeft = PROT_TARGET - protIn;
+const noToday = !todayE;
+document.getElementById("today").innerHTML = `
+  <div class="tcard ${calLeft < 0 ? "over" : ""}"><div class="tlabel">Calories left today</div>
+    <div class="tval">${calLeft < 0 ? "+" + Math.abs(Math.round(calLeft)) : Math.round(calLeft)}</div>
+    <div class="tsub">${noToday ? "nothing logged today" : `${Math.round(calIn)} / ${_intakeTarget} kcal eaten${calLeft < 0 ? " · over" : ""}`}</div></div>
+  <div class="tcard ${protLeft <= 0 ? "good" : ""}"><div class="tlabel">Protein left today</div>
+    <div class="tval">${protLeft <= 0 ? "✓ done" : Math.round(protLeft) + " g"}</div>
+    <div class="tsub">${noToday ? "nothing logged today" : `${Math.round(protIn)} / ${PROT_TARGET} g${protLeft <= 0 ? " · target hit" : ""}`}</div></div>`;
 
 // ---- tiles ----
 const lost = START.w - last.w;
