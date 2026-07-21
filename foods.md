@@ -16,3 +16,6 @@ Add new items as they come up.
 ## Notes
 - "2 scoops of protein" with no brand = Organis vegan chocolate (her default) unless she says otherwise.
 - Daily protein target ~130 g; calorie target ~1800 (recalculated as weight drops — see LOGGING.md).
+
+## Dietary constraint
+- NO DAIRY. Never suggest milk, cheese, yogurt, skyr, cottage cheese, whey, etc. Use plant-based protein (tofu, tempeh, edamame, legumes, seitan, vegan protein powder) or fish/meat.
