@@ -14,6 +14,7 @@ Add new items as they come up.
 | Norwegian salmon plate (200 g) w/ potato & green pea puree, salad | 1 serving | 700 | 40 |
 | Pilsner beer (Plzen) | 500 ml | 215 | 2 |
 | White wine | 1 glass (150 ml) | 120 | 0 |
+| Chicken breast, cooked | 150 g | 250 | 45 |
 | Tomato | 1 medium (~120 g) | 22 | 1 |
 | Carrot | 1 medium (~60 g) | 25 | 1 |
 
