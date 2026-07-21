@@ -9,7 +9,7 @@ Any Claude session (phone or desktop) can update this tracker by following these
 
 ## Files
 - `log.csv` — one row per day. Columns: `date,weight_kg,calories,steps,notes` (date is YYYY-MM-DD).
-- `index.html` — the dashboard. Near the bottom is a JS array `const DATA = [ ... ]`; each entry looks like `{ d: "2026-07-20", w: 81.25, note: "" }`.
+- `index.html` — the dashboard. Near the bottom is a JS array `const DATA = [ ... ]`; each entry looks like `{ d: "2026-07-20", w: 81.25, cal: 1800, note: "" }`. The `cal` (calories) field is optional but include it whenever the user gives calories — the dashboard's "This week" panel averages it for intake adherence.
 
 ## Steps to log
 1. Get today's date and the user's numbers (weight kg required; calories/steps/notes optional).

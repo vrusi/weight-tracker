@@ -126,6 +126,14 @@
   th.num, td.num { text-align: right; }
   .tablewrap { overflow-x: auto; margin-top: 24px; }
   footer { margin-top: 28px; font-size: 13px; color: var(--ink-3); }
+  .review { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .rstat { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+  .rstat .rlabel {
+    font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 600; margin-bottom: 5px;
+  }
+  .rstat .rval { font-size: 19px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  .rstat .rsub { font-size: 12px; color: var(--ink-2); margin-top: 3px; }
 </style>
 </head>
 <body>
@@ -148,6 +156,12 @@
     </div>
   </div>
 
+  <div class="card">
+    <h2>This week</h2>
+    <p class="note">Computed live from your log — updates every visit, no laptop needed.</p>
+    <div class="review" id="review"></div>
+  </div>
+
   <div class="tablewrap card">
     <h2>Log</h2>
     <table id="logtable">
@@ -160,9 +174,9 @@
 </div>
 
 <script>
-// ===== DATA — append new entries here (date, weight kg, optional note) =====
+// ===== DATA — append new entries here. cal (calories) is optional. =====
 const DATA = [
-  { d: "2026-07-20", w: 81.25, note: "start" },
+  { d: "2026-07-20", w: 81.25, cal: 740, note: "start" },
 ];
 // ==========================================================================
 
@@ -199,6 +213,41 @@ document.getElementById("tiles").innerHTML = `
   <div class="tile"><div class="label">Pace</div>
     <div class="pill ${onTrack ? "good" : "warn"}">${onTrack ? "✓ on track" : "▲ behind"}</div>
     <div class="delta">${avgVsTarget >= 0 ? "+" : ""}${avgVsTarget.toFixed(1)} kg vs target</div></div>`;
+
+// ---- weekly review (client-side, always live) ----
+// nearest entry within 2 days of a target time
+const nearAvg = tt => entries.reduce((best, e) =>
+  Math.abs(e.t - tt) <= 2 * day && (!best || Math.abs(e.t - tt) < Math.abs(best.t - tt)) ? e : best, null);
+const weekAgo = nearAvg(last.t - 7 * day);
+const weeklyChange = weekAgo ? last.avg - weekAgo.avg : null;
+
+const last7 = entries.filter(e => e.t > last.t - 7 * day && e.t <= last.t);
+const calE = last7.filter(e => e.cal != null && e.cal !== "" && !isNaN(e.cal));
+const avgCal = calE.length ? calE.reduce((s, e) => s + +e.cal, 0) / calE.length : null;
+
+// TDEE recalc from current 7-day-avg weight (Mifflin-St Jeor, female, 169 cm, 28y, ×1.5, −525 deficit)
+const bmr = 10 * last.avg + 6.25 * 169 - 5 * 28 - 161;
+const intakeTarget = Math.round((bmr * 1.5 - 525) / 10) * 10;
+
+let flag, flagCls;
+if (entries.length < 4) { flag = "log more — need ≥4 days for a reliable trend"; flagCls = "warn"; }
+else if (avgVsTarget > 1) { flag = "behind — tighten intake ~150 kcal/day or add steps"; flagCls = "warn"; }
+else if (weeklyChange != null && weeklyChange < -0.75) { flag = "losing fast — eat a bit more to protect muscle"; flagCls = "warn"; }
+else { flag = "on track"; flagCls = "good"; }
+
+const wc = weeklyChange == null ? "—" : `${weeklyChange <= 0 ? "" : "+"}${weeklyChange.toFixed(1)} kg`;
+const calStr = avgCal == null ? "—" : `${Math.round(avgCal)} kcal`;
+document.getElementById("review").innerHTML = `
+  <div class="rstat"><div class="rlabel">Weekly change</div><div class="rval">${wc}</div>
+    <div class="rsub">${weeklyChange == null ? "need ~7 days of data" : "vs last week's avg"}</div></div>
+  <div class="rstat"><div class="rlabel">Vs target line</div><div class="rval">${avgVsTarget >= 0 ? "+" : ""}${avgVsTarget.toFixed(1)} kg</div>
+    <div class="rsub">${avgVsTarget <= 0.3 ? "at or ahead of pace" : "behind pace"}</div></div>
+  <div class="rstat"><div class="rlabel">Avg intake (7d)</div><div class="rval">${calStr}</div>
+    <div class="rsub">${avgCal == null ? "no calories logged" : `${calE.length} of ${last7.length} days logged`}</div></div>
+  <div class="rstat"><div class="rlabel">Intake target</div><div class="rval">${intakeTarget} kcal</div>
+    <div class="rsub">recalc at ${last.avg.toFixed(1)} kg</div></div>
+  <div class="rstat" style="grid-column: 1 / -1"><div class="rlabel">Status</div>
+    <div class="pill ${flagCls}">${flagCls === "good" ? "✓" : "▲"} ${flag}</div></div>`;
 
 // ---- chart ----
 const svg = document.getElementById("chart");
