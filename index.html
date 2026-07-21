@@ -173,11 +173,24 @@
   <footer>Updated 20 Jul 2026 · Source: ~/weight-tracker/log.csv</footer>
 </div>
 
-<script>
-// ===== DATA — append new entries here. cal (calories) is optional. =====
-const DATA = [
-  { d: "2026-07-20", w: 81.25, cal: 740, note: "start" },
-];
+<script type="module">
+// ===== Data comes straight from log.csv — the single source of truth. =====
+// To log: append one line to log.csv (date,weight_kg,calories,steps,notes).
+// The dashboard reads it live on every load. No DATA array to maintain.
+async function loadCsv() {
+  const res = await fetch("log.csv?t=" + Date.now(), { cache: "no-store" });
+  const text = await res.text();
+  return text.trim().split("\n").slice(1).filter(Boolean).map(line => {
+    const p = line.split(",");
+    const e = { d: (p[0] || "").trim(), w: parseFloat(p[1]) };
+    if (p[2] && p[2].trim() !== "") e.cal = parseFloat(p[2]);
+    if (p[3] && p[3].trim() !== "") e.steps = parseFloat(p[3]);
+    const note = p.slice(4).join(",").trim();
+    if (note) e.note = note;
+    return e;
+  }).filter(e => e.d && !isNaN(e.w));
+}
+const DATA = await loadCsv();
 // ==========================================================================
 
 const START = { d: "2026-07-20", w: 81.25 };
@@ -195,6 +208,9 @@ entries.forEach((e, i) => {
   e.avg = win.reduce((s, x) => s + x.w, 0) / win.length;
 });
 const last = entries[entries.length - 1];
+
+document.querySelector("footer").textContent =
+  `Updated ${fmtD(last.t)} · ${entries.length} ${entries.length === 1 ? "entry" : "entries"} logged`;
 
 // ---- tiles ----
 const lost = START.w - last.w;
