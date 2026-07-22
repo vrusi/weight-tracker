@@ -196,6 +196,15 @@
     .spark { animation: none; opacity: 0.7; }
     .jfill, .jmark { transition: none; }
   }
+  /* pixel broccoli buddy */
+  .buddy {
+    position: fixed; right: 16px; bottom: 16px; width: 58px; height: auto;
+    cursor: pointer; z-index: 50; filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.18));
+  }
+  .buddy svg { display: block; width: 100%; height: auto; image-rendering: pixelated; shape-rendering: crispEdges; }
+  .buddy:active { transform: scale(0.9); }
+  @keyframes buddyBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  @media (prefers-reduced-motion: no-preference) { .buddy { animation: buddyBob 3s ease-in-out infinite; } }
 </style>
 </head>
 <body>
@@ -246,6 +255,8 @@
 
   <footer>Updated 20 Jul 2026 · Source: log.csv</footer>
 </div>
+
+<div class="buddy" id="buddy" title="poke me 🥦"></div>
 
 <script type="module">
 // ===== Data comes straight from log.csv — the single source of truth. =====
@@ -529,6 +540,33 @@ function confetti() {
 if (!noToday && protLeft <= 0) setTimeout(confetti, 500);
 const jm = document.querySelector(".jmark");
 if (jm) jm.addEventListener("click", confetti);
+
+// ---- pixel broccoli buddy ----
+const SPRITE = [
+  "..D..DD..D..",
+  ".DDD.DDD.DDD",
+  "DDGGDDDGGDDD",
+  "DGGGGDGGGGGD",
+  "GGGEEGGGEEGG",
+  "GGGEPGGGEPGG",
+  "DGGGGGGGGGGD",
+  "DGGGMMMMGGGD",
+  ".DGGGGGGGGD.",
+  "..DGGGGGGD..",
+  "....SSSS....",
+  "....SSSS....",
+  "...SSSSSS...",
+  "..SSSSSSSS..",
+];
+const PIX = { D: "#245F3A", G: "var(--accent)", E: "#ffffff", P: "#16211A", M: "#16211A", S: "#A9C097" };
+let sprite = `<svg viewBox="0 0 12 14" width="12" height="14" xmlns="http://www.w3.org/2000/svg">`;
+SPRITE.forEach((row, r) => [...row].forEach((ch, c) => {
+  if (PIX[ch]) sprite += `<rect x="${c}" y="${r}" width="1" height="1" fill="${PIX[ch]}"/>`;
+}));
+sprite += `</svg>`;
+const buddy = document.getElementById("buddy");
+buddy.innerHTML = sprite;
+buddy.addEventListener("click", confetti);
 </script>
 </body>
 </html>
