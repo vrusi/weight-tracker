@@ -175,6 +175,27 @@
   .issues { margin: 12px 0 0; padding-left: 18px; color: var(--warn-ink); font-size: 13px; line-height: 1.7; }
   a { color: var(--accent); }
   ::selection { background: var(--accent-weak); }
+
+  /* ---- fun layer ---- */
+  .coach { margin: 14px 0 0; font-size: 14px; color: var(--ink-2); font-style: italic; }
+  .coach .emo { font-style: normal; }
+  .jfill { transition: width 1.2s cubic-bezier(.22, 1, .36, 1); }
+  .jmark { transition: left 1.2s cubic-bezier(.22, 1, .36, 1); cursor: pointer; }
+  @keyframes bob { 0%, 100% { transform: translate(-50%, -50%); } 50% { transform: translate(-50%, -64%); } }
+  @keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(0.3) rotate(0deg); } 50% { opacity: 1; transform: scale(1) rotate(80deg); } }
+  .spark { position: absolute; font-size: 12px; pointer-events: none; animation: twinkle 2.4s ease-in-out infinite; }
+  @keyframes pop { 0% { transform: scale(1); } 45% { transform: scale(1.13); } 100% { transform: scale(1); } }
+  .tcard .tval { display: inline-block; }
+  .tcard:hover .tval { animation: pop 0.4s ease; }
+  .confetti { position: fixed; top: -24px; font-size: 20px; pointer-events: none; z-index: 99; will-change: transform; }
+  @keyframes fall { to { transform: translateY(106vh) rotate(var(--r)); opacity: 0; } }
+  @media (prefers-reduced-motion: no-preference) {
+    .jmark { animation: bob 2.8s ease-in-out infinite; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .spark { animation: none; opacity: 0.7; }
+    .jfill, .jmark { transition: none; }
+  }
 </style>
 </head>
 <body>
@@ -184,6 +205,7 @@
     <p class="eyebrow">Daily weigh-in</p>
     <h1>81.25 <span class="arw">→</span> 73.1 kg<br>by 20 Nov 2026</h1>
     <p class="sub">Pace <strong>−0.47 kg/week</strong> · intake <strong>~1800 kcal</strong> · protein <strong>~130 g</strong></p>
+    <p class="coach" id="coach"></p>
   </header>
 
   <div class="journey" id="journey"></div>
@@ -273,11 +295,20 @@ const totalToLose = START.w - GOAL.w;
 const doneLost = START.w - last.avg;
 const pct = Math.max(0, Math.min(100, doneLost / totalToLose * 100));
 const toGo = Math.max(0, last.avg - GOAL.w);
-document.getElementById("journey").innerHTML = `
+const journeyEl = document.getElementById("journey");
+journeyEl.innerHTML = `
   <div class="jtop"><span class="jlabel">Journey</span>
     <span class="jstat"><b>${pct.toFixed(0)}%</b> there · ${toGo.toFixed(1)} kg to go</span></div>
-  <div class="jtrack"><div class="jfill" style="width:${pct}%"></div><div class="jmark" style="left:${pct}%"></div></div>
+  <div class="jtrack"><div class="jfill" style="width:0%"></div><div class="jmark" style="left:0%" title="poke me"></div>
+    <span class="spark" style="left:${pct}%; top:-9px; margin-left:-4px">✨</span>
+    <span class="spark" style="left:${pct}%; top:12px; margin-left:-12px; animation-delay:1s">✨</span>
+    <span class="spark" style="left:${pct}%; top:-2px; margin-left:9px; animation-delay:1.7s">⭐</span></div>
   <div class="jends"><span><b>81.25</b> <em>start</em></span><span><em>goal</em> <b>73.1</b></span></div>`;
+// animate fill + marker in on load
+requestAnimationFrame(() => {
+  journeyEl.querySelector(".jfill").style.width = pct + "%";
+  journeyEl.querySelector(".jmark").style.left = pct + "%";
+});
 
 // ---- remaining today ----
 const PROT_TARGET = 130;
@@ -394,8 +425,9 @@ if (entries.length > 1) {
 entries.forEach(e => {
   s += `<circle cx="${x(e.t)}" cy="${y(e.w)}" r="3.2" fill="var(--accent)" opacity="0.30"/>`;
 });
-// emphasized endpoint + direct label
-s += `<circle cx="${x(last.t)}" cy="${y(last.avg)}" r="5" fill="var(--accent)" stroke="var(--card)" stroke-width="2.5"/>`;
+// emphasized endpoint + direct label (gentle pulse unless reduced motion)
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+s += `<circle cx="${x(last.t)}" cy="${y(last.avg)}" r="5" fill="var(--accent)" stroke="var(--card)" stroke-width="2.5">${reduceMotion ? "" : '<animate attributeName="r" values="5;7;5" dur="2.4s" repeatCount="indefinite"/>'}</circle>`;
 s += `<text x="${x(last.t) + 10}" y="${y(last.avg) + 4}" font-size="13" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">${last.avg.toFixed(1)}</text>`;
 // crosshair (hidden until hover)
 s += `<line id="xhair" x1="0" y1="${M.t}" x2="0" y2="${H - M.b}" stroke="var(--ink-3)" stroke-width="1" opacity="0" pointer-events="none"/>`;
@@ -459,6 +491,44 @@ document.getElementById("datacheck").innerHTML = issues.length
      <ul class="issues">${issues.map(i => `<li>${i}</li>`).join("")}</ul>`
   : `<div class="pill good">✓ ${dataLines.length} row${dataLines.length > 1 ? "s" : ""}, no issues</div>`;
 document.getElementById("rawcsv").textContent = CSV_TEXT.replace(/\s+$/, "");
+
+// ---- fun layer: cheeky coach line + confetti ----
+const quips = [
+  'protein first, feelings later <span class="emo">💪</span>',
+  'the daily scale lies — the average is your bestie <span class="emo">📉</span>',
+  'future you is already flexing <span class="emo">😎</span>',
+  'down we go, little gremlin <span class="emo">🫡</span>',
+  'abs are made in the kitchen, allegedly <span class="emo">🍳</span>',
+  'you vs yesterday\'s Monster. you win <span class="emo">⚡</span>',
+  'less doom, more broccoli <span class="emo">🥦</span>',
+  'hydrate or diedrate <span class="emo">💧</span>',
+  'one stick is not a meal, you goblin <span class="emo">🍗</span>',
+  'sparkle now, salmon later <span class="emo">✨🐟</span>',
+  'the descent continues, champion <span class="emo">⛰️</span>',
+  'eat the protein. you know you must. <span class="emo">👀</span>',
+];
+document.getElementById("coach").innerHTML = quips[Math.floor(Math.random() * quips.length)];
+
+function confetti() {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const emojis = ["✨", "🎉", "💪", "🥦", "⭐", "🫡", "🥳"];
+  for (let i = 0; i < 28; i++) {
+    const el = document.createElement("div");
+    el.className = "confetti";
+    el.textContent = emojis[i % emojis.length];
+    el.style.left = Math.random() * 100 + "vw";
+    const dur = 2.6 + Math.random() * 1.8;
+    el.style.setProperty("--r", (Math.random() * 720 - 360) + "deg");
+    el.style.animation = `fall ${dur}s linear forwards`;
+    el.style.animationDelay = Math.random() * 0.5 + "s";
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), (dur + 0.7) * 1000);
+  }
+}
+// celebrate if today's protein target is already hit; also poke the marker for a burst
+if (!noToday && protLeft <= 0) setTimeout(confetti, 500);
+const jm = document.querySelector(".jmark");
+if (jm) jm.addEventListener("click", confetti);
 </script>
 </body>
 </html>
