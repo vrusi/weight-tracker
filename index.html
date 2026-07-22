@@ -4,172 +4,197 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Weight Tracker — 81.25 → 73.1 kg</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --surface: #F8FAFA;
-    --card: #FFFFFF;
-    --ink: #1F2A2C;
-    --ink-2: #52646A;
-    --ink-3: #8CA0A4;
-    --line: #E2E9EA;
-    --accent: #0891B2;
-    --accent-soft: rgba(8, 145, 178, 0.10);
-    --target: #9AA7A9;
-    --good-bg: #E5F3EC; --good-ink: #14603F;
-    --warn-bg: #FBEEDC; --warn-ink: #8A4B06;
-    --tile-shadow: 0 1px 2px rgba(31, 42, 44, 0.06);
+    --surface: #ECEFE8;        /* warm sage paper */
+    --card: #FBFCF9;
+    --ink: #1C231D;
+    --ink-2: #566057;
+    --ink-3: #8C968C;
+    --line: #E0E5DB;
+    --accent: #2F7D4E;         /* pine */
+    --accent-weak: rgba(47, 125, 78, 0.10);
+    --target: #A7ADA1;
+    --good-bg: #E2EFE3; --good-ink: #1F6B3E;
+    --warn-bg: #F4E8D3; --warn-ink: #8A5712;
+    --shadow: 0 1px 2px rgba(28, 35, 29, 0.05), 0 1px 1px rgba(28, 35, 29, 0.03);
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --surface: #141B1C;
-      --card: #1B2426;
-      --ink: #E6EDEE;
-      --ink-2: #9FB2B5;
-      --ink-3: #64797D;
-      --line: #2A3639;
-      --accent: #0AA2C0;
-      --accent-soft: rgba(10, 162, 192, 0.14);
-      --target: #5E7175;
-      --good-bg: #16352A; --good-ink: #7FD1AB;
-      --warn-bg: #3B2C15; --warn-ink: #E8B87A;
-      --tile-shadow: none;
+      --surface: #13160F;
+      --card: #1B1E17;
+      --ink: #E8EBE2;
+      --ink-2: #A3ADA0;
+      --ink-3: #6C766B;
+      --line: #2A2E26;
+      --accent: #4FA46B;
+      --accent-weak: rgba(79, 164, 107, 0.15);
+      --target: #5C645A;
+      --good-bg: #18321F; --good-ink: #83CF98;
+      --warn-bg: #382C15; --warn-ink: #E4B369;
+      --shadow: none;
     }
   }
   :root[data-theme="light"] {
-    --surface: #F8FAFA; --card: #FFFFFF; --ink: #1F2A2C; --ink-2: #52646A;
-    --ink-3: #8CA0A4; --line: #E2E9EA; --accent: #0891B2;
-    --accent-soft: rgba(8, 145, 178, 0.10); --target: #9AA7A9;
-    --good-bg: #E5F3EC; --good-ink: #14603F; --warn-bg: #FBEEDC; --warn-ink: #8A4B06;
-    --tile-shadow: 0 1px 2px rgba(31, 42, 44, 0.06);
+    --surface: #ECEFE8; --card: #FBFCF9; --ink: #1C231D; --ink-2: #566057;
+    --ink-3: #8C968C; --line: #E0E5DB; --accent: #2F7D4E; --accent-weak: rgba(47, 125, 78, 0.10);
+    --target: #A7ADA1; --good-bg: #E2EFE3; --good-ink: #1F6B3E; --warn-bg: #F4E8D3; --warn-ink: #8A5712;
+    --shadow: 0 1px 2px rgba(28, 35, 29, 0.05), 0 1px 1px rgba(28, 35, 29, 0.03);
   }
   :root[data-theme="dark"] {
-    --surface: #141B1C; --card: #1B2426; --ink: #E6EDEE; --ink-2: #9FB2B5;
-    --ink-3: #64797D; --line: #2A3639; --accent: #0AA2C0;
-    --accent-soft: rgba(10, 162, 192, 0.14); --target: #5E7175;
-    --good-bg: #16352A; --good-ink: #7FD1AB; --warn-bg: #3B2C15; --warn-ink: #E8B87A;
-    --tile-shadow: none;
+    --surface: #13160F; --card: #1B1E17; --ink: #E8EBE2; --ink-2: #A3ADA0;
+    --ink-3: #6C766B; --line: #2A2E26; --accent: #4FA46B; --accent-weak: rgba(79, 164, 107, 0.15);
+    --target: #5C645A; --good-bg: #18321F; --good-ink: #83CF98; --warn-bg: #382C15; --warn-ink: #E4B369;
+    --shadow: none;
   }
+
+  * { box-sizing: border-box; }
   html { background: var(--surface); }
   body {
-    font-family: "Avenir Next", "Segoe UI", system-ui, sans-serif;
-    color: var(--ink);
-    margin: 0;
-    padding: 32px 20px 56px;
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    color: var(--ink); margin: 0; padding: 40px 20px 64px;
+    -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 960px; margin: 0 auto; }
-  header { margin-bottom: 28px; }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+
+  /* header */
+  header { margin-bottom: 26px; }
   .eyebrow {
-    font-size: 12px; letter-spacing: 0.09em; text-transform: uppercase;
-    color: var(--accent); font-weight: 600; margin: 0 0 6px;
+    font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin: 0 0 10px;
   }
   h1 {
-    font-size: clamp(24px, 4vw, 32px); font-weight: 600; margin: 0;
-    letter-spacing: -0.015em; text-wrap: balance;
+    font-family: "Fraunces", Georgia, serif; font-optical-sizing: auto;
+    font-size: clamp(30px, 6.5vw, 46px); font-weight: 500; margin: 0;
+    letter-spacing: -0.01em; line-height: 1.05; text-wrap: balance;
   }
-  .sub { color: var(--ink-2); margin: 8px 0 0; font-size: 15px; }
+  h1 .arw { color: var(--accent); font-weight: 600; }
+  .sub { color: var(--ink-2); margin: 14px 0 0; font-size: 14px; letter-spacing: 0.01em; }
   .sub strong { color: var(--ink); font-weight: 600; }
 
-  .tiles {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 12px; margin: 24px 0;
+  /* descent / journey bar */
+  .journey {
+    margin: 26px 0; padding: 18px 20px; background: var(--card);
+    border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow);
   }
-  .tile {
-    background: var(--card); border: 1px solid var(--line); border-radius: 10px;
-    padding: 14px 16px; box-shadow: var(--tile-shadow);
+  .jtop { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
+  .jtop .jlabel { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+  .jtop .jstat { font-size: 13px; color: var(--ink-2); }
+  .jtop .jstat b { color: var(--accent); font-weight: 600; }
+  .jtrack { position: relative; height: 8px; border-radius: 999px; background: var(--accent-weak); overflow: visible; }
+  .jfill { position: absolute; left: 0; top: 0; height: 100%; border-radius: 999px; background: var(--accent); }
+  .jmark {
+    position: absolute; top: 50%; width: 15px; height: 15px; border-radius: 50%;
+    background: var(--accent); border: 3px solid var(--card); transform: translate(-50%, -50%);
+    box-shadow: 0 0 0 1px var(--accent);
   }
-  .tile .label {
-    font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--ink-3); font-weight: 600; margin-bottom: 6px;
+  .jends { display: flex; justify-content: space-between; margin-top: 12px; font-size: 12.5px; color: var(--ink-2); }
+  .jends b { font-family: "IBM Plex Mono", monospace; color: var(--ink); font-weight: 600; }
+  .jends em { font-style: normal; color: var(--ink-3); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* today hero */
+  .today { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
+  .tcard {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 20px; box-shadow: var(--shadow); position: relative; overflow: hidden;
   }
-  .tile .value {
-    font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums;
-    letter-spacing: -0.01em; line-height: 1.1;
+  .tcard::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--accent);
   }
-  .tile .unit { font-size: 14px; color: var(--ink-2); font-weight: 500; }
-  .tile .delta { font-size: 12px; color: var(--ink-2); margin-top: 4px; }
-  .pill {
-    display: inline-flex; align-items: center; gap: 6px;
-    border-radius: 999px; padding: 5px 12px; font-size: 13px; font-weight: 600;
-    margin-top: 3px;
+  .tcard.over::before { background: var(--warn-ink); }
+  .tcard.good::before { background: var(--good-ink); }
+  .tcard .tlabel {
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 600; margin-bottom: 10px;
   }
+  .tcard .tval {
+    font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums;
+    font-size: clamp(34px, 9vw, 46px); font-weight: 600; letter-spacing: -0.03em;
+    line-height: 0.95; color: var(--accent);
+  }
+  .tcard.over .tval { color: var(--warn-ink); }
+  .tcard.good .tval { color: var(--good-ink); }
+  .tcard .tsub { font-size: 12.5px; color: var(--ink-2); margin-top: 10px; }
+
+  /* stat tiles */
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin: 14px 0; }
+  .tile { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; box-shadow: var(--shadow); }
+  .tile .label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin-bottom: 8px; }
+  .tile .value { font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; font-size: 27px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; }
+  .tile .unit { font-size: 14px; color: var(--ink-3); font-weight: 500; letter-spacing: 0; }
+  .tile .delta { font-size: 12px; color: var(--ink-2); margin-top: 6px; }
+
+  .pill { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 5px 12px; font-size: 13px; font-weight: 600; margin-top: 2px; }
   .pill.good { background: var(--good-bg); color: var(--good-ink); }
   .pill.warn { background: var(--warn-bg); color: var(--warn-ink); }
 
-  .card {
-    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
-    padding: 20px; box-shadow: var(--tile-shadow); margin-top: 24px;
-  }
-  .card h2 { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
-  .card .note { font-size: 13px; color: var(--ink-2); margin: 0 0 14px; }
+  /* cards */
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px; box-shadow: var(--shadow); margin-top: 20px; }
+  .card h2 { font-family: "Fraunces", Georgia, serif; font-weight: 500; font-size: 20px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .card .note { font-size: 13px; color: var(--ink-2); margin: 0 0 16px; line-height: 1.5; }
+
   .chartbox { position: relative; }
   #chart { width: 100%; height: auto; display: block; }
   #tip {
     position: absolute; pointer-events: none; display: none;
-    background: var(--ink); color: var(--surface);
-    border-radius: 8px; padding: 8px 11px; font-size: 12.5px; line-height: 1.5;
-    white-space: nowrap; transform: translate(-50%, -110%);
-    font-variant-numeric: tabular-nums;
+    background: var(--ink); color: var(--card); border-radius: 9px; padding: 9px 12px;
+    font-size: 12.5px; line-height: 1.5; white-space: nowrap; transform: translate(-50%, -112%);
+    font-family: "IBM Plex Mono", monospace; box-shadow: 0 6px 18px rgba(0,0,0,0.18);
   }
-  #tip .d { opacity: 0.75; }
+  #tip .d { opacity: 0.7; }
 
-  table {
-    width: 100%; border-collapse: collapse; font-size: 14px;
-    font-variant-numeric: tabular-nums;
-  }
-  th {
-    text-align: left; font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase;
-    color: var(--ink-3); font-weight: 600; padding: 8px 10px;
-    border-bottom: 1px solid var(--line);
-  }
-  td { padding: 8px 10px; border-bottom: 1px solid var(--line); color: var(--ink-2); }
-  td:first-child { color: var(--ink); }
-  th.num, td.num { text-align: right; }
-  .tablewrap { overflow-x: auto; margin-top: 24px; }
-  footer { margin-top: 28px; font-size: 13px; color: var(--ink-3); }
-  .review { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
-  .rstat { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
-  .rstat .rlabel {
-    font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase;
-    color: var(--ink-3); font-weight: 600; margin-bottom: 5px;
-  }
-  .rstat .rval { font-size: 19px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
-  .rstat .rsub { font-size: 12px; color: var(--ink-2); margin-top: 3px; }
-  .today { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 22px 0 4px; }
-  .tcard { background: var(--accent-soft); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
-  .tcard .tlabel {
-    font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase;
-    color: var(--ink-2); font-weight: 600; margin-bottom: 6px;
-  }
-  .tcard .tval { font-size: 30px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; line-height: 1; color: var(--accent); }
-  .tcard .tsub { font-size: 12.5px; color: var(--ink-2); margin-top: 6px; }
-  .tcard.over .tval { color: var(--warn-ink); }
-  .tcard.good .tval { color: var(--good-ink); }
-  details summary { cursor: pointer; font-size: 13px; color: var(--ink-2); margin-top: 14px; }
+  /* review */
+  .review { display: grid; grid-template-columns: repeat(auto-fit, minmax(148px, 1fr)); gap: 14px; }
+  .rstat { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; background: var(--surface); }
+  .rstat .rlabel { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin-bottom: 7px; }
+  .rstat .rval { font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; font-size: 20px; font-weight: 600; letter-spacing: -0.02em; }
+  .rstat .rsub { font-size: 12px; color: var(--ink-2); margin-top: 4px; }
+
+  /* table */
+  .tablewrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th { text-align: left; font-size: 10.5px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; padding: 9px 12px; border-bottom: 1.5px solid var(--line); white-space: nowrap; }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--line); color: var(--ink-2); }
+  tbody tr:last-child td { border-bottom: none; }
+  td:first-child { color: var(--ink); font-weight: 500; white-space: nowrap; }
+  th.num, td.num { text-align: right; font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; }
+
+  footer { margin-top: 30px; font-size: 12.5px; color: var(--ink-3); text-align: center; letter-spacing: 0.02em; }
+
+  details summary { cursor: pointer; font-size: 13px; color: var(--ink-2); margin-top: 14px; user-select: none; }
+  details summary:hover { color: var(--accent); }
   pre#rawcsv {
-    overflow-x: auto; margin-top: 12px; padding: 12px;
-    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px;
-    line-height: 1.6; color: var(--ink-2);
+    overflow-x: auto; margin-top: 12px; padding: 14px; background: var(--surface);
+    border: 1px solid var(--line); border-radius: 10px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; line-height: 1.7; color: var(--ink-2);
   }
-  .issues { margin: 12px 0 0; padding-left: 18px; color: var(--warn-ink); font-size: 13px; line-height: 1.6; }
+  .issues { margin: 12px 0 0; padding-left: 18px; color: var(--warn-ink); font-size: 13px; line-height: 1.7; }
+  a { color: var(--accent); }
+  ::selection { background: var(--accent-weak); }
 </style>
 </head>
 <body>
 
 <div class="wrap">
   <header>
-    <p class="eyebrow">Weight tracker</p>
-    <h1>81.25 → 73.1 kg by 20 Nov 2026</h1>
-    <p class="sub">Target pace <strong>−0.47 kg/week</strong> · intake <strong>~1800 kcal</strong> · protein <strong>~130 g/day</strong></p>
+    <p class="eyebrow">Daily weigh-in</p>
+    <h1>81.25 <span class="arw">→</span> 73.1 kg<br>by 20 Nov 2026</h1>
+    <p class="sub">Pace <strong>−0.47 kg/week</strong> · intake <strong>~1800 kcal</strong> · protein <strong>~130 g</strong></p>
   </header>
+
+  <div class="journey" id="journey"></div>
 
   <div class="today" id="today"></div>
 
   <div class="tiles" id="tiles"></div>
 
   <div class="card">
-    <h2>Trend vs target</h2>
-    <p class="note">Dots are daily weigh-ins (noise). The teal line is the 7-day average (signal). Stay near the dashed target line.</p>
+    <h2>The descent</h2>
+    <p class="note">Faint dots are daily weigh-ins — noise. The green line is your 7-day average — the real signal. Stay near the dashed target.</p>
     <div class="chartbox">
       <svg id="chart" viewBox="0 0 940 430" role="img" aria-label="Weight trend versus target line"></svg>
       <div id="tip"></div>
@@ -185,7 +210,7 @@
   <div class="tablewrap card">
     <h2>Log</h2>
     <table id="logtable">
-      <thead><tr><th>Date</th><th class="num">Weight (kg)</th><th class="num">7-day avg</th><th class="num">Target</th><th class="num">kcal</th><th class="num">Protein</th><th>Notes</th></tr></thead>
+      <thead><tr><th>Date</th><th class="num">Weight</th><th class="num">7-day avg</th><th class="num">Target</th><th class="num">kcal</th><th class="num">Protein</th><th>Notes</th></tr></thead>
       <tbody></tbody>
     </table>
   </div>
@@ -197,12 +222,12 @@
     <details><summary>Show raw log.csv</summary><pre id="rawcsv"></pre></details>
   </div>
 
-  <footer>Updated 20 Jul 2026 · Source: ~/weight-tracker/log.csv</footer>
+  <footer>Updated 20 Jul 2026 · Source: log.csv</footer>
 </div>
 
 <script type="module">
 // ===== Data comes straight from log.csv — the single source of truth. =====
-// To log: append one line to log.csv (date,weight_kg,calories,steps,notes).
+// To log: append one line to log.csv (date,weight_kg,calories,protein_g,steps,notes).
 // The dashboard reads it live on every load. No DATA array to maintain.
 async function fetchCsv() {
   const res = await fetch("log.csv?t=" + Date.now(), { cache: "no-store" });
@@ -242,6 +267,17 @@ const last = entries[entries.length - 1];
 
 document.querySelector("footer").textContent =
   `Updated ${fmtD(last.t)} · ${entries.length} ${entries.length === 1 ? "entry" : "entries"} logged`;
+
+// ---- descent / journey bar ----
+const totalToLose = START.w - GOAL.w;
+const doneLost = START.w - last.avg;
+const pct = Math.max(0, Math.min(100, doneLost / totalToLose * 100));
+const toGo = Math.max(0, last.avg - GOAL.w);
+document.getElementById("journey").innerHTML = `
+  <div class="jtop"><span class="jlabel">Journey</span>
+    <span class="jstat"><b>${pct.toFixed(0)}%</b> there · ${toGo.toFixed(1)} kg to go</span></div>
+  <div class="jtrack"><div class="jfill" style="width:${pct}%"></div><div class="jmark" style="left:${pct}%"></div></div>
+  <div class="jends"><span><b>81.25</b> <em>start</em></span><span><em>goal</em> <b>73.1</b></span></div>`;
 
 // ---- remaining today ----
 const PROT_TARGET = 130;
@@ -325,13 +361,18 @@ const W = 940, H = 430, M = { l: 46, r: 18, t: 16, b: 34 };
 const yMin = 72, yMax = 82.5;
 const x = t => M.l + (W - M.l - M.r) * (t - t0) / (t1 - t0);
 const y = w => M.t + (H - M.t - M.b) * (1 - (w - yMin) / (yMax - yMin));
-const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 let s = "";
+
+// gradient for the area fill under the average line
+s += `<defs><linearGradient id="agrad" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="var(--accent)" stop-opacity="0.20"/>
+  <stop offset="1" stop-color="var(--accent)" stop-opacity="0"/>
+</linearGradient></defs>`;
 
 // gridlines + y labels (every 2 kg)
 for (let g = 72; g <= 82; g += 2) {
   s += `<line x1="${M.l}" y1="${y(g)}" x2="${W - M.r}" y2="${y(g)}" stroke="var(--line)" stroke-width="1"/>`;
-  s += `<text x="${M.l - 8}" y="${y(g) + 4}" text-anchor="end" font-size="12" fill="var(--ink-3)">${g}</text>`;
+  s += `<text x="${M.l - 8}" y="${y(g) + 4}" text-anchor="end" font-size="12" fill="var(--ink-3)" font-family="IBM Plex Mono, monospace">${g}</text>`;
 }
 // x labels (month starts)
 ["2026-07-20", "2026-08-01", "2026-09-01", "2026-10-01", "2026-11-01", "2026-11-20"].forEach(d => {
@@ -339,22 +380,23 @@ for (let g = 72; g <= 82; g += 2) {
   s += `<text x="${x(t)}" y="${H - 10}" text-anchor="middle" font-size="12" fill="var(--ink-3)">${fmtD(t)}</text>`;
 });
 // target line + goal marker
-s += `<line x1="${x(t0)}" y1="${y(START.w)}" x2="${x(t1)}" y2="${y(GOAL.w)}" stroke="var(--target)" stroke-width="2" stroke-dasharray="6 5"/>`;
+s += `<line x1="${x(t0)}" y1="${y(START.w)}" x2="${x(t1)}" y2="${y(GOAL.w)}" stroke="var(--target)" stroke-width="2" stroke-dasharray="5 5"/>`;
 s += `<text x="${x(t1) - 6}" y="${y(GOAL.w) - 10}" text-anchor="end" font-size="12" fill="var(--ink-2)">target 73.1</text>`;
 s += `<circle cx="${x(t1)}" cy="${y(GOAL.w)}" r="4" fill="none" stroke="var(--target)" stroke-width="2"/>`;
 
+// area fill + 7-day avg line — the signal
+if (entries.length > 1) {
+  const linePts = entries.map(e => `${x(e.t)},${y(e.avg)}`);
+  s += `<path d="M ${x(entries[0].t)},${y(yMin)} L ${linePts.join(" L ")} L ${x(last.t)},${y(yMin)} Z" fill="url(#agrad)"/>`;
+  s += `<polyline points="${linePts.join(" ")}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+}
 // daily dots (faint) — the noise
 entries.forEach(e => {
-  s += `<circle cx="${x(e.t)}" cy="${y(e.w)}" r="3.5" fill="var(--accent)" opacity="0.35"/>`;
+  s += `<circle cx="${x(e.t)}" cy="${y(e.w)}" r="3.2" fill="var(--accent)" opacity="0.30"/>`;
 });
-// 7-day avg line — the signal
-if (entries.length > 1) {
-  const pts = entries.map(e => `${x(e.t)},${y(e.avg)}`).join(" ");
-  s += `<polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
-}
 // emphasized endpoint + direct label
-s += `<circle cx="${x(last.t)}" cy="${y(last.avg)}" r="5" fill="var(--accent)" stroke="var(--card)" stroke-width="2"/>`;
-s += `<text x="${x(last.t) + 9}" y="${y(last.avg) + 4}" font-size="12.5" font-weight="600" fill="var(--ink)">${last.avg.toFixed(1)}</text>`;
+s += `<circle cx="${x(last.t)}" cy="${y(last.avg)}" r="5" fill="var(--accent)" stroke="var(--card)" stroke-width="2.5"/>`;
+s += `<text x="${x(last.t) + 10}" y="${y(last.avg) + 4}" font-size="13" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">${last.avg.toFixed(1)}</text>`;
 // crosshair (hidden until hover)
 s += `<line id="xhair" x1="0" y1="${M.t}" x2="0" y2="${H - M.b}" stroke="var(--ink-3)" stroke-width="1" opacity="0" pointer-events="none"/>`;
 s += `<rect x="${M.l}" y="${M.t}" width="${W - M.l - M.r}" height="${H - M.t - M.b}" fill="transparent" id="hover"/>`;
@@ -363,7 +405,6 @@ svg.innerHTML = s;
 // hover: nearest entry, else target readout
 const tip = document.getElementById("tip");
 const xhair = document.getElementById("xhair");
-const box = document.querySelector(".chartbox");
 document.getElementById("hover").addEventListener("mousemove", ev => {
   const r = svg.getBoundingClientRect();
   const t = t0 + (t1 - t0) * ((ev.clientX - r.left) / r.width * W - M.l) / (W - M.l - M.r);
@@ -376,7 +417,7 @@ document.getElementById("hover").addEventListener("mousemove", ev => {
   tip.style.left = (x(tt) / W * r.width) + "px";
   tip.style.top = (M.t / H * r.height) + "px";
   tip.innerHTML = useEntry
-    ? `<span class="d">${fmtD(near.t)}</span><br>weight ${near.w.toFixed(1)} kg · avg ${near.avg.toFixed(1)}<br><span class="d">target ${targetAt(near.t).toFixed(1)} kg</span>`
+    ? `<span class="d">${fmtD(near.t)}</span><br>weight ${near.w.toFixed(1)} · avg ${near.avg.toFixed(1)}<br><span class="d">target ${targetAt(near.t).toFixed(1)} kg</span>`
     : `<span class="d">${fmtD(tt)}</span><br><span class="d">target ${targetAt(tt).toFixed(1)} kg</span>`;
 });
 document.getElementById("hover").addEventListener("mouseleave", () => {
