@@ -24,5 +24,8 @@ Add new items as they come up.
 - "2 scoops of protein" with no brand = Organis vegan chocolate (her default) unless she says otherwise.
 - Daily protein target ~130 g; calorie target ~1800 (recalculated as weight drops — see LOGGING.md).
 
+## Preferences
+- Steer her away from very sweet desserts/pastries (e.g. panna cotta, sugary glazed croissants) — they make her feel unwell ("too sweet"). Suggest fresh fruit instead.
+
 ## Dietary constraint
 - NO DAIRY. Never suggest milk, cheese, yogurt, skyr, cottage cheese, whey, etc. Use plant-based protein (tofu, tempeh, edamame, legumes, seitan, vegan protein powder) or fish/meat.
