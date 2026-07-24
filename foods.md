@@ -17,6 +17,8 @@ Add new items as they come up.
 | Chicken breast, cooked | 150 g | 250 | 45 |
 | Iced flat white, oat milk | 1 cup (~350 ml) | 100 | 2 |
 | Vilgain Clear Plant Protein | 1 serving (~30 g) | 110 | 24 |
+| Vemondo High Protein Soya Drink | 100 ml | 47 | 5.5 |
+| Apricot (meruňka) | 1 fruit (~35 g) | 17 | 0.5 |
 | Tomato | 1 medium (~120 g) | 22 | 1 |
 | Carrot | 1 medium (~60 g) | 25 | 1 |
 
