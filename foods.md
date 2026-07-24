@@ -21,6 +21,8 @@ Add new items as they come up.
 | Apricot (meruňka) | 1 fruit (~35 g) | 17 | 0.5 |
 | Nectarine | 1 medium (~140 g) | 63 | 1.5 |
 | Grapes | 100 g | 69 | 0.7 |
+| Pikok High Protein chicken breast ham | 100 g | 110 | 23 |
+| Pikok High Protein turkey breast ham | 100 g | 105 | 22 |
 | dm Sportness Pre-Workout Booster | 1 serving | 15 | 0 |
 | Weider Premium EAA | 1 serving (~11 g) | 35 | 8 |
 | Tomato | 1 medium (~120 g) | 22 | 1 |
