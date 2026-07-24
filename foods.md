@@ -20,6 +20,7 @@ Add new items as they come up.
 | Vemondo High Protein Soya Drink | 100 ml | 47 | 5.5 |
 | Apricot (meruňka) | 1 fruit (~35 g) | 17 | 0.5 |
 | Nectarine | 1 medium (~140 g) | 63 | 1.5 |
+| Grapes | 100 g | 69 | 0.7 |
 | Tomato | 1 medium (~120 g) | 22 | 1 |
 | Carrot | 1 medium (~60 g) | 25 | 1 |
 
