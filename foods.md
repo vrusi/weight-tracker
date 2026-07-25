@@ -26,6 +26,7 @@ Add new items as they come up.
 | Tesco lentil & rice high protein cakes | 1 piece | 35 | 2.5 |
 | Red cabbage salad | 1 portion (~100 g) | 60 | 1.5 |
 | Mayoketchup | 1 tbsp | 55 | 0.3 |
+| Mattoni Multi (flavoured water) | 500 ml | 100 | 0 |
 | Pikok High Protein turkey breast ham | 100 g | 105 | 22 |
 | dm Sportness Pre-Workout Booster | 1 serving | 15 | 0 |
 | Weider Premium EAA | 1 serving (~11 g) | 35 | 8 |
