@@ -23,6 +23,9 @@ Add new items as they come up.
 | Nectarine | 1 medium (~140 g) | 63 | 1.5 |
 | Grapes | 100 g | 69 | 0.7 |
 | Pikok High Protein chicken breast ham | 100 g | 110 | 23 |
+| Tesco lentil & rice high protein cakes | 1 piece | 35 | 2.5 |
+| Red cabbage salad | 1 portion (~100 g) | 60 | 1.5 |
+| Mayoketchup | 1 tbsp | 55 | 0.3 |
 | Pikok High Protein turkey breast ham | 100 g | 105 | 22 |
 | dm Sportness Pre-Workout Booster | 1 serving | 15 | 0 |
 | Weider Premium EAA | 1 serving (~11 g) | 35 | 8 |
