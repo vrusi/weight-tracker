@@ -27,6 +27,8 @@ Add new items as they come up.
 | Red cabbage salad | 1 portion (~100 g) | 60 | 1.5 |
 | Mayoketchup | 1 tbsp | 55 | 0.3 |
 | Mattoni Multi (flavoured water) | 500 ml | 100 | 0 |
+| Vegan gyros tortilla (pea-protein seitan, veg, mayo) | 1 wrap | 600 | 30 |
+| Espresso tonic | 1 glass (~250 ml) | 80 | 0 |
 | Pikok High Protein turkey breast ham | 100 g | 105 | 22 |
 | dm Sportness Pre-Workout Booster | 1 serving | 15 | 0 |
 | Weider Premium EAA | 1 serving (~11 g) | 35 | 8 |
