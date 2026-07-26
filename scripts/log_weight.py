@@ -45,6 +45,12 @@ def num(key, ndigits):
 weight = num("weight", 2)
 active = num("active", 0)
 
+# An empty Health query sums to 0; nobody burns zero active calories in a day.
+# Treat it as "no data" rather than writing a misleading 0 into the log.
+if active == 0:
+    print("active energy came back as 0 (empty Health query?); not recording it")
+    active = None
+
 if weight is None and active is None:
     print("no weight or active energy provided; nothing to do")
     sys.exit(0)

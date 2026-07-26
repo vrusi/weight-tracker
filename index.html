@@ -271,7 +271,9 @@ function parseLine(line) {
   if (p[2] && p[2].trim() !== "") e.cal = parseFloat(p[2]);
   if (p[3] && p[3].trim() !== "") e.protein = parseFloat(p[3]);
   if (p[4] && p[4].trim() !== "") e.steps = parseFloat(p[4]);
-  if (p[5] && p[5].trim() !== "") e.active = parseFloat(p[5]);
+  // A literal 0 means the Health query came back empty, not that she lay still all day —
+  // treat it as missing so the target falls back instead of going strict-sedentary.
+  if (p[5] && p[5].trim() !== "" && parseFloat(p[5]) > 0) e.active = parseFloat(p[5]);
   const note = p.slice(6).join(",").trim();
   if (note) e.note = note;
   return e;
