@@ -7,7 +7,10 @@ on:
     inputs:
       weight:
         description: "Weight in kg (e.g. 79.95)"
-        required: true
+        required: false
+      active:
+        description: "Active energy in kcal (e.g. 615)"
+        required: false
       date:
         description: "Date YYYY-MM-DD (blank = today)"
         required: false
@@ -25,10 +28,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Upsert weight into log.csv
+      - name: Upsert weight / active energy into log.csv
         env:
           PAYLOAD: ${{ toJSON(github.event.client_payload) }}
           WEIGHT: ${{ github.event.inputs.weight }}
+          ACTIVE: ${{ github.event.inputs.active }}
           DATE: ${{ github.event.inputs.date }}
         run: python3 scripts/log_weight.py
 
@@ -40,6 +44,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No change."
           else
-            git commit -m "log: weight via Apple Health"
+            git commit -m "log: via Apple Health"
             git push
           fi
