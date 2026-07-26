@@ -23,6 +23,8 @@ Add new items as they come up.
 | Vilgain Collagen Complex | 1 scoop (~11 g) | 40 | 0* |
 | Apricot (meruňka) | 1 fruit (~35 g) | 17 | 0.5 |
 | Nectarine | 1 medium (~140 g) | 63 | 1.5 |
+| Mango | 1/2 medium (~100 g flesh) | 60 | 1 |
+| Homemade low-sugar layer cake (piškot, vegan milk, tvaroh-smetana-agar) | 1 slice (~200 g) | 360 | 12 |
 | Grapes | 100 g | 69 | 0.7 |
 | Pikok High Protein chicken breast ham | 100 g | 110 | 23 |
 | Tesco lentil & rice high protein cakes | 1 piece | 35 | 2.5 |
