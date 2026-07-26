@@ -275,7 +275,8 @@ function parseLine(line) {
   if (note) e.note = note;
   return e;
 }
-const DATA = dataLines.map(parseLine).filter(e => e.d && !isNaN(e.w));
+// Keep any row with a real date — the weight is optional (food-only days away from the scale).
+const DATA = dataLines.map(parseLine).filter(e => e.d && !isNaN(Date.parse(e.d)));
 // ==========================================================================
 
 const START = { d: "2026-07-20", w: 81.25 };
@@ -286,16 +287,20 @@ const t0 = Date.parse(START.d), t1 = Date.parse(GOAL.d);
 const targetAt = t => START.w + (GOAL.w - START.w) * (t - t0) / (t1 - t0);
 const fmtD = t => new Date(t).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
 
-// 7-day rolling average of available entries
+// Every logged day. A row can have food but no weight (e.g. away from the scale).
 const entries = DATA.map(e => ({ ...e, t: Date.parse(e.d) })).sort((a, b) => a.t - b.t);
-entries.forEach((e, i) => {
-  const win = entries.filter(x => x.t > e.t - 7 * day && x.t <= e.t);
+// The weight trend only uses days with an actual weigh-in.
+const weighed = entries.filter(e => !isNaN(e.w));
+// 7-day rolling average of available weigh-ins
+weighed.forEach(e => {
+  const win = weighed.filter(x => x.t > e.t - 7 * day && x.t <= e.t);
   e.avg = win.reduce((s, x) => s + x.w, 0) / win.length;
 });
-const last = entries[entries.length - 1];
+const last = weighed[weighed.length - 1];    // most recent weigh-in
+const lastAny = entries[entries.length - 1]; // most recent logged day, weighed or not
 
 document.querySelector("footer").textContent =
-  `Updated ${fmtD(last.t)} · ${entries.length} ${entries.length === 1 ? "entry" : "entries"} logged`;
+  `Updated ${fmtD(lastAny.t)} · ${entries.length} ${entries.length === 1 ? "entry" : "entries"} logged`;
 
 // ---- descent / journey bar ----
 const totalToLose = START.w - GOAL.w;
@@ -321,7 +326,7 @@ requestAnimationFrame(() => {
 const PROT_TARGET = 130;
 const now = new Date();
 const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-const todayE = last.d === todayStr ? last : null;
+const todayE = entries.find(e => e.d === todayStr) || null;
 // intake target from current 7-day-avg weight (same recalc as the review panel)
 const _bmr = 10 * last.avg + 6.25 * 169 - 5 * 28 - 161;
 const _intakeTarget = Math.round((_bmr * 1.5 - 525) / 10) * 10;
@@ -358,12 +363,13 @@ document.getElementById("tiles").innerHTML = `
 
 // ---- weekly review (client-side, always live) ----
 // nearest entry within 2 days of a target time
-const nearAvg = tt => entries.reduce((best, e) =>
+const nearAvg = tt => weighed.reduce((best, e) =>
   Math.abs(e.t - tt) <= 2 * day && (!best || Math.abs(e.t - tt) < Math.abs(best.t - tt)) ? e : best, null);
 const weekAgo = nearAvg(last.t - 7 * day);
 const weeklyChange = weekAgo ? last.avg - weekAgo.avg : null;
 
-const last7 = entries.filter(e => e.t > last.t - 7 * day && e.t <= last.t);
+// Intake averages count every logged day, weighed or not — anchored on the latest log.
+const last7 = entries.filter(e => e.t > lastAny.t - 7 * day && e.t <= lastAny.t);
 const calE = last7.filter(e => e.cal != null && e.cal !== "" && !isNaN(e.cal));
 const avgCal = calE.length ? calE.reduce((s, e) => s + +e.cal, 0) / calE.length : null;
 const protE = last7.filter(e => e.protein != null && !isNaN(e.protein));
@@ -374,7 +380,7 @@ const bmr = 10 * last.avg + 6.25 * 169 - 5 * 28 - 161;
 const intakeTarget = Math.round((bmr * 1.5 - 525) / 10) * 10;
 
 let flag, flagCls;
-if (entries.length < 4) { flag = "log more — need ≥4 days for a reliable trend"; flagCls = "warn"; }
+if (weighed.length < 4) { flag = "log more — need ≥4 days for a reliable trend"; flagCls = "warn"; }
 else if (avgVsTarget > 1) { flag = "behind — tighten intake ~150 kcal/day or add steps"; flagCls = "warn"; }
 else if (weeklyChange != null && weeklyChange < -0.75) { flag = "losing fast — eat a bit more to protect muscle"; flagCls = "warn"; }
 else { flag = "on track"; flagCls = "good"; }
@@ -423,13 +429,13 @@ s += `<text x="${x(t1) - 6}" y="${y(GOAL.w) - 10}" text-anchor="end" font-size="
 s += `<circle cx="${x(t1)}" cy="${y(GOAL.w)}" r="4" fill="none" stroke="var(--target)" stroke-width="2"/>`;
 
 // area fill + 7-day avg line — the signal
-if (entries.length > 1) {
-  const linePts = entries.map(e => `${x(e.t)},${y(e.avg)}`);
-  s += `<path d="M ${x(entries[0].t)},${y(yMin)} L ${linePts.join(" L ")} L ${x(last.t)},${y(yMin)} Z" fill="url(#agrad)"/>`;
+if (weighed.length > 1) {
+  const linePts = weighed.map(e => `${x(e.t)},${y(e.avg)}`);
+  s += `<path d="M ${x(weighed[0].t)},${y(yMin)} L ${linePts.join(" L ")} L ${x(last.t)},${y(yMin)} Z" fill="url(#agrad)"/>`;
   s += `<polyline points="${linePts.join(" ")}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
 }
 // daily dots (faint) — the noise
-entries.forEach(e => {
+weighed.forEach(e => {
   s += `<circle cx="${x(e.t)}" cy="${y(e.w)}" r="3.2" fill="var(--accent)" opacity="0.30"/>`;
 });
 // emphasized endpoint + direct label (gentle pulse unless reduced motion)
@@ -447,7 +453,7 @@ const xhair = document.getElementById("xhair");
 document.getElementById("hover").addEventListener("mousemove", ev => {
   const r = svg.getBoundingClientRect();
   const t = t0 + (t1 - t0) * ((ev.clientX - r.left) / r.width * W - M.l) / (W - M.l - M.r);
-  const near = entries.reduce((a, b) => Math.abs(b.t - t) < Math.abs(a.t - t) ? b : a);
+  const near = weighed.reduce((a, b) => Math.abs(b.t - t) < Math.abs(a.t - t) ? b : a);
   const useEntry = Math.abs(near.t - t) < 3 * day;
   const tt = useEntry ? near.t : t;
   xhair.setAttribute("x1", x(tt)); xhair.setAttribute("x2", x(tt));
@@ -465,8 +471,8 @@ document.getElementById("hover").addEventListener("mouseleave", () => {
 
 // ---- table (newest first) ----
 document.querySelector("#logtable tbody").innerHTML = [...entries].reverse().map(e => `
-  <tr><td>${fmtD(e.t)}</td><td class="num">${e.w.toFixed(2)}</td>
-  <td class="num">${e.avg.toFixed(2)}</td><td class="num">${targetAt(e.t).toFixed(2)}</td>
+  <tr><td>${fmtD(e.t)}</td><td class="num">${isNaN(e.w) ? "—" : e.w.toFixed(2)}</td>
+  <td class="num">${e.avg == null ? "—" : e.avg.toFixed(2)}</td><td class="num">${targetAt(e.t).toFixed(2)}</td>
   <td class="num">${e.cal != null ? Math.round(e.cal) : "—"}</td>
   <td class="num">${e.protein != null ? Math.round(e.protein) : "—"}</td>
   <td>${e.note || ""}</td></tr>`).join("");
@@ -481,9 +487,11 @@ function checkRows(lines) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) issues.push(`Line ${ln}: bad date "${d}"`);
     else if (seen[d]) issues.push(`Line ${ln}: duplicate date ${d}`);
     if (d) seen[d] = true;
-    const w = parseFloat(p[1]);
-    if (p[1] == null || p[1].trim() === "" || isNaN(w)) issues.push(`Line ${ln}: weight not a number ("${(p[1] || "").trim()}")`);
-    else if (w < 40 || w > 150) issues.push(`Line ${ln}: weight ${w} kg looks wrong (out of 40–150)`);
+    // An empty weight is fine — that's a food-only day. Only flag one that's present but wrong.
+    const wRaw = (p[1] || "").trim();
+    const w = parseFloat(wRaw);
+    if (wRaw !== "" && isNaN(w)) issues.push(`Line ${ln}: weight not a number ("${wRaw}")`);
+    else if (wRaw !== "" && (w < 40 || w > 150)) issues.push(`Line ${ln}: weight ${w} kg looks wrong (out of 40–150)`);
     [["calories", 2], ["protein", 3], ["steps", 4]].forEach(([name, i]) => {
       const v = (p[i] || "").trim();
       if (v !== "" && isNaN(parseFloat(v))) issues.push(`Line ${ln}: ${name} not a number ("${v}")`);
