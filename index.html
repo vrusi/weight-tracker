@@ -113,8 +113,18 @@
     list-style: none; display: inline-flex; align-items: center; gap: 7px;
   }
   .explain summary::-webkit-details-marker { display: none; }
-  .explain summary::after { content: "+"; font-weight: 500; opacity: 0.65; }
-  .explain[open] summary::after { content: "–"; }
+  /* chevron drawn in CSS so it can rotate smoothly rather than swapping glyphs */
+  .explain summary::after {
+    content: ""; width: 6px; height: 6px; opacity: 0.7;
+    border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+    transform: translateY(-2px) rotate(45deg);
+    transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .explain[open] summary::after { transform: translateY(1px) rotate(225deg); }
+  .explain-body { overflow: hidden; }
+  @media (prefers-reduced-motion: reduce) {
+    .explain summary::after { transition: none; }
+  }
   .explain summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
   .explain p { margin: 11px 0 0; line-height: 1.6; max-width: 62ch; }
   .explain b { color: var(--ink); font-weight: 600; }
@@ -245,14 +255,16 @@
 
   <details class="explain">
     <summary>How the daily target works</summary>
-    <p><b>Baseline <span id="exBase">—</span> kcal.</b> A normal day's energy for your current
-      weight, minus the deficit that lands you at 73.1 kg in November.</p>
-    <p><b>Credits.</b> Apple Health measures what you actually burn moving — your active energy.
-      Watches overestimate it, strength work worst of all, so only <b>75%</b> is credited back
-      on top of a sedentary base. Burn more, eat more.</p>
-    <p><b>It only ever rises.</b> The target never drops below the baseline, so a quiet morning
-      still reads <span id="exBase2">—</span> rather than punishing you for not having moved yet.
-      Today: <span class="eg" id="exWorked">—</span></p>
+    <div class="explain-body"><div class="explain-inner">
+      <p><b>Baseline <span id="exBase">—</span> kcal.</b> A normal day's energy for your current
+        weight, minus the deficit that lands you at 73.1 kg in November.</p>
+      <p><b>Credits.</b> Apple Health measures what you actually burn moving — your active energy.
+        Watches overestimate it, strength work worst of all, so only <b>75%</b> is credited back
+        on top of a sedentary base. Burn more, eat more.</p>
+      <p><b>It only ever rises.</b> The target never drops below the baseline, so a quiet morning
+        still reads <span id="exBase2">—</span> rather than punishing you for not having moved yet.
+        Today: <span class="eg" id="exWorked">—</span></p>
+    </div></div>
   </details>
 
   <div class="tiles" id="tiles"></div>
@@ -638,6 +650,38 @@ function countUp(el) {
   })(start);
 }
 document.querySelectorAll("#today .tval").forEach(countUp);
+
+// ---- explainer: smooth expand / collapse ----
+// <details> opens and closes instantly, and its content isn't rendered while closed, so CSS
+// alone can't animate it. Drive the height ourselves and hold `open` until the close finishes.
+const explain = document.querySelector(".explain");
+const explainBody = explain.querySelector(".explain-body");
+let explainAnim = null;
+explain.querySelector("summary").addEventListener("click", ev => {
+  ev.preventDefault();
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    explain.open = !explain.open;
+    return;
+  }
+  // A closed <details> still reports its content height, so derive the start from the open
+  // state instead — except mid-flight, where the live animated height keeps a reversal smooth.
+  const running = explainAnim && explainAnim.playState === "running";
+  const from = running
+    ? parseFloat(getComputedStyle(explainBody).height) || 0
+    : (explain.open ? explainBody.scrollHeight : 0);
+  if (explainAnim) explainAnim.cancel();
+  const opening = !explain.open;
+  if (opening) explain.open = true;      // render the content so it can be measured
+  const to = opening ? explainBody.scrollHeight : 0;
+  explainAnim = explainBody.animate(
+    { height: [from + "px", to + "px"], opacity: opening ? [0, 1] : [1, 0] },
+    { duration: 340, easing: "cubic-bezier(0.22, 1, 0.36, 1)" }
+  );
+  explainAnim.onfinish = () => {
+    explainAnim = null;
+    if (!opening) explain.open = false;  // only hide once it has finished collapsing
+  };
+});
 // celebrate if today's protein target is already hit; also poke the marker for a burst
 if (!noToday && protLeft <= 0) setTimeout(confetti, 500);
 const jm = document.querySelector(".jmark");
