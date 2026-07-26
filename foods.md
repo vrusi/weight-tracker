@@ -33,7 +33,8 @@ Add new items as they come up.
 | Espresso tonic | 1 glass (~250 ml) | 80 | 0 |
 | Kombucha | 330 ml | 85 | 0 |
 | Bratrs kuřecí kebab (main only) | 1 portion | 320 | 38 |
-| Bratrs hummus (side) | 1 portion | 250 | 8 |
+| Bratrs hummus (side, generous + olive oil) | 1 portion | 280 | 8 |
+| Bratrs mayo sauce (as served, drizzled over dish) | 1 portion | 250 | 0 |
 | Pikok High Protein turkey breast ham | 100 g | 105 | 22 |
 | dm Sportness Pre-Workout Booster | 1 serving | 15 | 0 |
 | Weider Premium EAA | 1 serving (~11 g) | 35 | 8 |
