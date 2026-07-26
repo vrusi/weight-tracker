@@ -182,7 +182,16 @@
   #tip .d { opacity: 0.7; }
 
   /* review */
-  .review { display: grid; grid-template-columns: repeat(auto-fit, minmax(148px, 1fr)); gap: 14px; }
+  /* Five stats plus a full-width status. Two columns orphan the fifth, so it spans; above
+     720px a six-track grid gives 3 + 2 with the pair splitting the row evenly. Neither
+     layout leaves a hole. */
+  .review { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .review .rstat:nth-child(5) { grid-column: 1 / -1; }
+  @media (min-width: 720px) {
+    .review { grid-template-columns: repeat(6, 1fr); }
+    .review .rstat { grid-column: span 2; }
+    .review .rstat:nth-child(4), .review .rstat:nth-child(5) { grid-column: span 3; }
+  }
   .rstat { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; background: var(--surface); }
   .rstat .rlabel { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin-bottom: 7px; }
   .rstat .rval { font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; font-size: 20px; font-weight: 600; letter-spacing: -0.02em; }
@@ -280,7 +289,6 @@
 
   <div class="card">
     <h2>This week</h2>
-    <p class="note">Computed live from your log — updates every visit, no laptop needed.</p>
     <div class="review" id="review"></div>
   </div>
 
