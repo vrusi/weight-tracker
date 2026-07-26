@@ -202,9 +202,17 @@
      in both directions with the header pinned. */
   .tablewrap { overflow: auto; max-height: 44vh; overscroll-behavior: contain; }
   .tablewrap thead th { position: sticky; top: 0; z-index: 1; background: var(--card); }
-  /* Clamp long notes so a row stays scannable; the full text is in the raw log below. */
+  /* Clamp long notes so a row stays scannable, but let any clipped note be opened. */
+  .notewrap { min-width: 22ch; max-width: 46ch; }
   .notecell { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-    overflow: hidden; min-width: 22ch; max-width: 46ch; }
+    overflow: hidden; }
+  .notewrap.open .notecell { display: block; -webkit-line-clamp: none; }
+  .notemore {
+    display: none; margin-top: 4px; padding: 0; border: 0; background: none;
+    font: inherit; font-size: 11.5px; font-weight: 600; color: var(--accent); cursor: pointer;
+  }
+  .notewrap.truncated .notemore { display: inline-block; }
+  .notemore:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
   thead th { text-align: left; font-size: 10.5px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; padding: 9px 12px; border-bottom: 1.5px solid var(--line); white-space: nowrap; }
   td { padding: 9px 12px; border-bottom: 1px solid var(--line); color: var(--ink-2); }
@@ -582,7 +590,19 @@ document.querySelector("#logtable tbody").innerHTML = [...entries].reverse().map
   <td class="num">${e.protein != null ? Math.round(e.protein) : "—"}</td>
   <td class="num">${e.active != null ? Math.round(e.active) : "—"}</td>
   <td class="num">${e.cal != null && e.active != null ? Math.round(e.cal - e.active) : "—"}</td>
-  <td><div class="notecell">${e.note || ""}</div></td></tr>`).join("");
+  <td><div class="notewrap"><div class="notecell">${e.note || ""}</div><button class="notemore" type="button">more</button></div></td></tr>`).join("");
+
+// Only offer "more" on notes that are actually clipped, and toggle the clamp on click.
+document.querySelectorAll("#logtable .notewrap").forEach(wrap => {
+  const cell = wrap.querySelector(".notecell");
+  if (cell.scrollHeight > cell.clientHeight + 1) wrap.classList.add("truncated");
+});
+document.querySelector("#logtable tbody").addEventListener("click", ev => {
+  const btn = ev.target.closest(".notemore");
+  if (!btn) return;
+  const wrap = btn.closest(".notewrap");
+  btn.textContent = wrap.classList.toggle("open") ? "less" : "more";
+});
 
 // ---- data check (flags messy rows the parser would otherwise drop) ----
 function checkRows(lines) {
