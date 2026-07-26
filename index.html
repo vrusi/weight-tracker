@@ -98,6 +98,30 @@
 
   /* today hero */
   .today { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
+  /* Three cards in a two-column grid orphans the third — let it span instead of
+     leaving a hole. Above 720px all three sit in one row and it spans nothing. */
+  .today .tcard:nth-child(3) { grid-column: 1 / -1; }
+  @media (min-width: 720px) {
+    .today { grid-template-columns: repeat(3, 1fr); }
+    .today .tcard:nth-child(3) { grid-column: auto; }
+  }
+
+  /* target explainer */
+  .explain { margin: -2px 0 18px; font-size: 13px; color: var(--ink-2); }
+  .explain summary {
+    cursor: pointer; color: var(--accent); font-weight: 600; font-size: 12.5px;
+    list-style: none; display: inline-flex; align-items: center; gap: 7px;
+  }
+  .explain summary::-webkit-details-marker { display: none; }
+  .explain summary::after { content: "+"; font-weight: 500; opacity: 0.65; }
+  .explain[open] summary::after { content: "–"; }
+  .explain summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+  .explain p { margin: 11px 0 0; line-height: 1.6; max-width: 62ch; }
+  .explain b { color: var(--ink); font-weight: 600; }
+  .explain .eg {
+    display: inline-block; font-family: "IBM Plex Mono", monospace; font-size: 12px;
+    background: var(--accent-weak); color: var(--ink); padding: 2px 7px; border-radius: 5px;
+  }
   .tcard {
     background: var(--card); border: 1px solid var(--line); border-radius: 14px;
     padding: 20px; box-shadow: var(--shadow); position: relative; overflow: hidden;
@@ -218,6 +242,18 @@
   <div class="journey" id="journey"></div>
 
   <div class="today" id="today"></div>
+
+  <details class="explain">
+    <summary>How the daily target works</summary>
+    <p><b>Baseline <span id="exBase">—</span> kcal.</b> A normal day's energy for your current
+      weight, minus the deficit that lands you at 73.1 kg in November.</p>
+    <p><b>Credits.</b> Apple Health measures what you actually burn moving — your active energy.
+      Watches overestimate it, strength work worst of all, so only <b>75%</b> is credited back
+      on top of a sedentary base. Burn more, eat more.</p>
+    <p><b>It only ever rises.</b> The target never drops below the baseline, so a quiet morning
+      still reads <span id="exBase2">—</span> rather than punishing you for not having moved yet.
+      Today: <span class="eg" id="exWorked">—</span></p>
+  </details>
 
   <div class="tiles" id="tiles"></div>
 
@@ -370,6 +406,14 @@ document.getElementById("today").innerHTML = `
       : `net ${Math.round(calIn - activeIn)} kcal · ${_intakeTarget > targetFor(last.avg, null)
           ? `+${Math.round(ACTIVE_CREDIT * activeIn)} credited (×${ACTIVE_CREDIT})`
           : "still within baseline"}`}</div></div>`;
+
+// ---- target explainer (real numbers, so it matches the cards above) ----
+const _assumed = targetFor(last.avg, null);
+document.getElementById("exBase").textContent = _assumed;
+document.getElementById("exBase2").textContent = _assumed;
+document.getElementById("exWorked").textContent = activeIn == null
+  ? `no activity synced yet → ${_assumed}`
+  : `burned ${Math.round(activeIn)} → +${Math.round(ACTIVE_CREDIT * activeIn)} credited → ${_intakeTarget}`;
 
 // ---- tiles ----
 const lost = START.w - last.w;
