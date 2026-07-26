@@ -614,12 +614,17 @@ document.getElementById("hover").addEventListener("mousemove", ev => {
   const tt = useEntry ? near.t : t;
   xhair.setAttribute("x1", x(tt)); xhair.setAttribute("x2", x(tt));
   xhair.setAttribute("opacity", "0.4");
-  tip.style.display = "block";
-  tip.style.left = (x(tt) / W * r.width) + "px";
-  tip.style.top = (M.t / H * r.height) + "px";
+  // Fill it before measuring, since the width depends on the text.
   tip.innerHTML = useEntry
     ? `<span class="d">${fmtD(near.t)}</span><br>weight ${near.w.toFixed(1)} · avg ${near.avg.toFixed(1)}<br><span class="d">target ${targetAt(near.t).toFixed(1)} kg</span>`
     : `<span class="d">${fmtD(tt)}</span><br><span class="d">target ${targetAt(tt).toFixed(1)} kg</span>`;
+  tip.style.display = "block";
+  tip.style.top = (M.t / H * r.height) + "px";
+  // `left` is the tip's centre (it is translated -50%), so hold that centre far enough from
+  // each side that the tip can't hang off the edge near the first or last point.
+  const half = tip.offsetWidth / 2;
+  const centre = x(tt) / W * r.width;
+  tip.style.left = Math.max(half + 2, Math.min(centre, r.width - half - 2)) + "px";
 });
 document.getElementById("hover").addEventListener("mouseleave", () => {
   tip.style.display = "none"; xhair.setAttribute("opacity", "0");
