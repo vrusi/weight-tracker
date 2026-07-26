@@ -44,6 +44,7 @@ Add new items as they come up.
 | Carrot | 1 medium (~60 g) | 25 | 1 |
 
 ## Notes
+- Creatine: 0 kcal. Effective dose is 3–5 g/day; more is excreted, causes GI upset, and adds intracellular water (inflates scale weight).
 - *Collagen is an incomplete protein (no tryptophan, low leucine) — good for skin/joints, but do NOT count it toward the daily protein target for muscle retention. Log its calories only.
 - "2 scoops of protein" with no brand = Organis vegan chocolate (her default) unless she says otherwise.
 - Daily protein target ~130 g; calorie target ~1800 (recalculated as weight drops — see LOGGING.md).
