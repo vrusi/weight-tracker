@@ -28,6 +28,7 @@ Add new items as they come up.
 | Grapes | 100 g | 69 | 0.7 |
 | Pikok High Protein chicken breast ham | 100 g | 110 | 23 |
 | Egg, whole | 1 large (~50 g) | 72 | 6.3 |
+| Banana | 1 medium (~118 g) | 105 | 1.3 |
 | Tesco lentil & rice high protein cakes | 1 piece | 35 | 2.5 |
 | Red cabbage salad | 1 portion (~100 g) | 60 | 1.5 |
 | Mayoketchup | 1 tbsp | 55 | 0.3 |
