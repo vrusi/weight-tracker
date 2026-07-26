@@ -31,6 +31,9 @@ Add new items as they come up.
 | Mattoni Multi (flavoured water) | 500 ml | 100 | 0 |
 | Vegan gyros tortilla (pea-protein seitan, veg, mayo) | 1 wrap | 600 | 30 |
 | Espresso tonic | 1 glass (~250 ml) | 80 | 0 |
+| Kombucha | 330 ml | 85 | 0 |
+| Bratrs kuřecí kebab (main only) | 1 portion | 320 | 38 |
+| Bratrs hummus (side) | 1 portion | 250 | 8 |
 | Pikok High Protein turkey breast ham | 100 g | 105 | 22 |
 | dm Sportness Pre-Workout Booster | 1 serving | 15 | 0 |
 | Weider Premium EAA | 1 serving (~11 g) | 35 | 8 |
