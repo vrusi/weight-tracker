@@ -264,6 +264,7 @@
 
   /* motivation photo */
   .motivation { display: flex; justify-content: center; margin: 40px 0 4px; }
+  .motivation[hidden] { display: none; }
   .frame {
     position: relative; padding: 7px; border-radius: 22px;
     background: linear-gradient(145deg, var(--accent), #7FB069 38%, #E8B369 72%, var(--accent));
@@ -351,9 +352,9 @@
     <details><summary>Show raw log.csv</summary><pre id="rawcsv"></pre></details>
   </div>
 
-  <div class="motivation">
+  <div class="motivation" id="motivation" hidden>
     <div class="frame">
-      <img src="motivation.jpg" width="335" height="597" alt="" loading="lazy" decoding="async">
+      <img id="motimg" alt="" loading="lazy" decoding="async">
       <span class="spark"></span><span class="spark"></span><span class="spark"></span>
       <span class="spark"></span><span class="spark"></span><span class="spark"></span>
     </div>
@@ -758,6 +759,24 @@ explain.querySelector("summary").addEventListener("click", ev => {
 if (!noToday && protLeft <= 0) setTimeout(confetti, 500);
 const jm = document.querySelector(".jmark");
 if (jm) jm.addEventListener("click", confetti);
+
+// ---- motivation photo: a different one at random on every load ----
+// Add pictures by dropping them in motivation/ and listing them in motivation.json.
+// The block stays hidden if the list is missing or empty, so it can never render an empty frame.
+try {
+  const res = await fetch("motivation.json?t=" + Date.now(), { cache: "no-store" });
+  const pics = await res.json();
+  if (Array.isArray(pics) && pics.length) {
+    const pick = pics[Math.floor(Math.random() * pics.length)];
+    const img = document.getElementById("motimg");
+    if (pick.w) img.width = pick.w;   // stated up front so the page never jumps
+    if (pick.h) img.height = pick.h;
+    img.src = pick.src;
+    document.getElementById("motivation").hidden = false;
+  }
+} catch (e) {
+  console.warn("no motivation pictures:", e);
+}
 </script>
 </body>
 </html>
