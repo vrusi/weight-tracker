@@ -224,8 +224,11 @@
   .notecell { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
     overflow: hidden; }
   .notewrap.open .notecell { display: block; -webkit-line-clamp: none; }
+  /* The whole clipped note toggles, not just the word — on a phone an 11px "more" is a
+     miss-and-scroll. The button stays as the visible affordance. */
+  .notewrap.truncated .notecell { cursor: pointer; }
   .notemore {
-    display: none; margin-top: 4px; padding: 0; border: 0; background: none;
+    display: none; margin: 2px -8px 0; padding: 7px 8px; border: 0; background: none;
     font: inherit; font-size: 11.5px; font-weight: 600; color: var(--accent); cursor: pointer;
   }
   .notewrap.truncated .notemore { display: inline-block; }
@@ -236,6 +239,44 @@
   tbody tr:last-child td { border-bottom: none; }
   td:first-child { color: var(--ink); font-weight: 500; white-space: nowrap; }
   th.num, td.num { text-align: right; font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; }
+
+  /* On a phone the ten columns run ~500px off the right edge behind a horizontal scroll,
+     and nothing signals they are there. Below 720px the same markup becomes one card per
+     day: date and weight as the heading, the rest as labelled chips, notes underneath. */
+  @media (max-width: 719px) {
+    .tablewrap { max-height: 52vh; overflow-x: hidden; overflow-y: auto; }
+    #logtable, #logtable tbody { display: block; }
+    #logtable thead { display: none; }
+    #logtable tr {
+      display: flex; flex-wrap: wrap; gap: 11px 14px;
+      padding: 13px 15px; margin-bottom: 10px; background: var(--surface);
+      border: 1px solid var(--line); border-radius: 12px;
+    }
+    #logtable tr:last-child { margin-bottom: 0; }
+    #logtable td { display: block; padding: 0; border: none; text-align: left; }
+    #logtable td::before {
+      content: attr(data-label); display: block; margin-bottom: 3px;
+      font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--ink-3); font-weight: 600;
+    }
+    /* A column with nothing logged shouldn't spend a chip saying so. Weight is the
+       exception — a blank one is the point on a day away from the scale. */
+    #logtable td.empty:not(.c-weight) { display: none; }
+    /* Date and weight fill the heading line; what's left over is narrower than a chip's
+       min-width, so the stats always start on the next line. */
+    #logtable td.c-date, #logtable td.c-weight {
+      font-size: 15px; font-weight: 600; color: var(--ink);
+    }
+    #logtable td.c-date { flex: 1 1 60%; }
+    #logtable td.c-weight { flex: 1 1 30%; text-align: right; }
+    #logtable td.c-date::before, #logtable td.c-weight::before { display: none; }
+    #logtable td.c-weight:not(.empty)::after {
+      content: " kg"; font-size: 11.5px; font-weight: 500; color: var(--ink-3);
+    }
+    #logtable td:not(.c-date):not(.c-weight):not(.c-note) { flex: 1 1 auto; min-width: 58px; }
+    #logtable td.c-note { flex: 1 1 100%; }
+    .notewrap { min-width: 0; max-width: none; }
+  }
 
   footer { margin-top: 30px; font-size: 12.5px; color: var(--ink-3); text-align: center; letter-spacing: 0.02em; }
 
@@ -314,7 +355,7 @@
   <header>
     <p class="eyebrow">Daily weigh-in</p>
     <h1>81.25 <span class="arw">→</span> 73.1 kg<br>by 20 Nov 2026</h1>
-    <p class="sub">Pace <strong>−0.47 kg/week</strong> · intake <strong id="subintake">—</strong> · protein <strong>~130 g</strong></p>
+    <p class="sub">Pace <strong id="subpace">—</strong> · intake <strong id="subintake">—</strong> · protein <strong>~130 g</strong></p>
     <p class="coach" id="coach"></p>
   </header>
 
@@ -417,6 +458,10 @@ const day = 86400000;
 const t0 = Date.parse(START.d), t1 = Date.parse(GOAL.d);
 const targetAt = t => START.w + (GOAL.w - START.w) * (t - t0) / (t1 - t0);
 const fmtD = t => new Date(t).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+// Planned loss per week, derived from the two endpoints rather than restated, so the header
+// and the pace tile can never drift apart from each other or from the target line.
+const PLAN_RATE = (GOAL.w - START.w) / ((t1 - t0) / (7 * day));
+document.getElementById("subpace").textContent = `−${Math.abs(PLAN_RATE).toFixed(2)} kg/week`;
 
 // Every logged day. A row can have food but no weight (e.g. away from the scale).
 const entries = DATA.map(e => ({ ...e, t: Date.parse(e.d) })).sort((a, b) => a.t - b.t);
@@ -527,31 +572,42 @@ document.getElementById("exWorked").textContent = activeIn == null
   ? `no activity synced yet → ${_assumed}`
   : `burned ${Math.round(activeIn)} → +${Math.round(ACTIVE_CREDIT * activeIn)} credited → ${_intakeTarget}`;
 
-// ---- tiles ----
-const lost = START.w - last.w;
-const avgVsTarget = last.avg - targetAt(last.t);
-const onTrack = avgVsTarget <= 0.3;
-document.getElementById("tiles").innerHTML = `
-  <div class="tile"><div class="label">Current</div>
-    <div class="value">${last.w.toFixed(1)}<span class="unit"> kg</span></div>
-    <div class="delta">${fmtD(last.t)}</div></div>
-  <div class="tile"><div class="label">7-day avg</div>
-    <div class="value">${last.avg.toFixed(1)}<span class="unit"> kg</span></div>
-    <div class="delta">target now: ${targetAt(last.t).toFixed(1)} kg</div></div>
-  <div class="tile"><div class="label">Lost</div>
-    <div class="value">${lost.toFixed(1)}<span class="unit"> kg</span></div>
-    <div class="delta">of ${(START.w - GOAL.w).toFixed(1)} kg goal</div></div>
-  <div class="tile"><div class="label">Pace</div>
-    <div class="pill ${onTrack ? "good" : "warn"}">${onTrack ? "✓ on track" : "▲ behind"}</div>
-    <div class="delta">${avgVsTarget >= 0 ? "+" : ""}${avgVsTarget.toFixed(1)} kg vs target</div></div>`;
-
-// ---- weekly review (client-side, always live) ----
+// ---- weekly rate of loss ----
 // nearest entry within 2 days of a target time
 const nearAvg = tt => weighed.reduce((best, e) =>
   Math.abs(e.t - tt) <= 2 * day && (!best || Math.abs(e.t - tt) < Math.abs(best.t - tt)) ? e : best, null);
 const weekAgo = nearAvg(last.t - 7 * day);
 const weeklyChange = weekAgo ? last.avg - weekAgo.avg : null;
 
+// ---- tiles ----
+const lost = START.w - last.w;
+const avgVsTarget = last.avg - targetAt(last.t);
+// Pace answers "is the current rate healthy", not "am I ahead of the line" — that second
+// question belongs to the 7-day-avg tile, which already carries the target line. Splitting
+// them stops the tile reading "on track" while the status below says "losing too fast".
+// The thresholds are the same ones the status pill uses, so the two always agree.
+const FAST = -0.75, SLOW = -0.15;
+let paceCls, paceTxt;
+if (weeklyChange == null) { paceCls = "warn"; paceTxt = "▲ need 7 days"; }
+else if (weeklyChange <= FAST) { paceCls = "warn"; paceTxt = "▲ too fast"; }
+else if (weeklyChange >= SLOW) { paceCls = "warn"; paceTxt = "▲ too slow"; }
+else { paceCls = "good"; paceTxt = "✓ steady"; }
+document.getElementById("tiles").innerHTML = `
+  <div class="tile"><div class="label">Current</div>
+    <div class="value">${last.w.toFixed(1)}<span class="unit"> kg</span></div>
+    <div class="delta">${fmtD(last.t)}</div></div>
+  <div class="tile"><div class="label">7-day avg</div>
+    <div class="value">${last.avg.toFixed(1)}<span class="unit"> kg</span></div>
+    <div class="delta">target now ${targetAt(last.t).toFixed(1)} kg · ${Math.abs(avgVsTarget).toFixed(1)} kg ${avgVsTarget <= 0 ? "ahead" : "behind"}</div></div>
+  <div class="tile"><div class="label">Lost</div>
+    <div class="value">${lost.toFixed(1)}<span class="unit"> kg</span></div>
+    <div class="delta">of ${(START.w - GOAL.w).toFixed(1)} kg goal</div></div>
+  <div class="tile"><div class="label">Pace</div>
+    <div class="pill ${paceCls}">${paceTxt}</div>
+    <div class="delta">${weeklyChange == null ? "not enough weigh-ins yet"
+      : `${weeklyChange <= 0 ? "−" : "+"}${Math.abs(weeklyChange).toFixed(1)} kg/wk · plan −${Math.abs(PLAN_RATE).toFixed(2)}`}</div></div>`;
+
+// ---- weekly review (client-side, always live) ----
 // Intake averages count every logged day, weighed or not — anchored on the latest log.
 const last7 = entries.filter(e => e.t > lastAny.t - 7 * day && e.t <= lastAny.t);
 const calE = last7.filter(e => e.cal != null && e.cal !== "" && !isNaN(e.cal));
@@ -709,26 +765,36 @@ document.getElementById("hover").addEventListener("mouseleave", () => {
 });
 
 // ---- table (newest first) ----
+// Every cell carries its column name and a class, so the same markup can be read as a table
+// on a wide screen and as one card per day on a phone (see the max-width: 719px block).
+const cell = (cls, label, val) =>
+  `<td class="num c-${cls}${val === "—" ? " empty" : ""}" data-label="${label}">${val}</td>`;
 document.querySelector("#logtable tbody").innerHTML = [...entries].reverse().map(e => `
-  <tr><td>${fmtD(e.t)}</td><td class="num">${isNaN(e.w) ? "—" : e.w.toFixed(2)}</td>
-  <td class="num">${e.avg == null ? "—" : e.avg.toFixed(2)}</td><td class="num">${targetAt(e.t).toFixed(2)}</td>
-  <td class="num">${e.cal != null ? Math.round(e.cal) : "—"}</td>
-  <td class="num">${e.protein != null ? Math.round(e.protein) : "—"}</td>
-  <td class="num">${e.active != null ? Math.round(e.active) : "—"}</td>
-  <td class="num">${e.cal != null && e.active != null ? Math.round(e.cal - e.active) : "—"}</td>
-  <td class="num">${e.sleep != null ? e.sleep.toFixed(1) : "—"}</td>
-  <td><div class="notewrap"><div class="notecell">${e.note || ""}</div><button class="notemore" type="button">more</button></div></td></tr>`).join("");
+  <tr><td class="c-date" data-label="Date">${fmtD(e.t)}</td>
+  ${cell("weight", "Weight", isNaN(e.w) ? "—" : e.w.toFixed(2))}
+  ${cell("avg", "7-day avg", e.avg == null ? "—" : e.avg.toFixed(2))}
+  ${cell("target", "Target", targetAt(e.t).toFixed(2))}
+  ${cell("cal", "kcal", e.cal != null ? Math.round(e.cal) : "—")}
+  ${cell("prot", "Protein", e.protein != null ? Math.round(e.protein) : "—")}
+  ${cell("burn", "Burned", e.active != null ? Math.round(e.active) : "—")}
+  ${cell("net", "Net", e.cal != null && e.active != null ? Math.round(e.cal - e.active) : "—")}
+  ${cell("sleep", "Sleep", e.sleep != null ? e.sleep.toFixed(1) : "—")}
+  <td class="c-note" data-label="Notes"><div class="notewrap"><div class="notecell">${e.note || ""}</div><button class="notemore" type="button" aria-expanded="false">more</button></div></td></tr>`).join("");
 
 // Only offer "more" on notes that are actually clipped, and toggle the clamp on click.
 document.querySelectorAll("#logtable .notewrap").forEach(wrap => {
-  const cell = wrap.querySelector(".notecell");
-  if (cell.scrollHeight > cell.clientHeight + 1) wrap.classList.add("truncated");
+  const c = wrap.querySelector(".notecell");
+  if (c.scrollHeight > c.clientHeight + 1) wrap.classList.add("truncated");
 });
+// Anywhere in a clipped note toggles it, not just the button — the button alone is an
+// 11px target, which on a phone is a miss and an accidental scroll.
 document.querySelector("#logtable tbody").addEventListener("click", ev => {
-  const btn = ev.target.closest(".notemore");
-  if (!btn) return;
-  const wrap = btn.closest(".notewrap");
-  btn.textContent = wrap.classList.toggle("open") ? "less" : "more";
+  const wrap = ev.target.closest(".notewrap.truncated");
+  if (!wrap) return;
+  const open = wrap.classList.toggle("open");
+  const btn = wrap.querySelector(".notemore");
+  btn.textContent = open ? "less" : "more";
+  btn.setAttribute("aria-expanded", String(open));
 });
 
 // ---- data check (flags messy rows the parser would otherwise drop) ----
