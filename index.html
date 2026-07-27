@@ -145,6 +145,14 @@
   .tcard .tlabel {
     font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
     color: var(--ink-3); font-weight: 600; margin-bottom: 10px;
+    display: flex; align-items: flex-start; gap: 6px;
+  }
+  /* Inline with the label rather than floated in a corner, so it can't collide with the
+     label wrapping to two lines on a narrow card. */
+  .tcard .ticon {
+    flex: 0 0 auto; width: 15px; height: 15px; margin-top: -1px;
+    fill: none; stroke: currentColor; stroke-width: 1.5;
+    stroke-linecap: round; stroke-linejoin: round;
   }
   .tcard .tval {
     font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums;
@@ -188,10 +196,14 @@
      layout leaves a hole. */
   /* sleep strip */
   #sleepstrip { margin-top: 16px; }
-  #sleepstrip .slabel {
-    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--ink-3); font-weight: 600; margin-bottom: 8px;
+  /* A real section heading in the display face, matching the card titles — a small
+     uppercase label read as just another stat caption and the bars went unidentified. */
+  #sleepstrip { border-top: 1px solid var(--line); padding-top: 16px; }
+  #sleepstrip h3 {
+    font-family: "Fraunces", Georgia, serif; font-weight: 500; font-size: 18px;
+    margin: 0 0 3px; letter-spacing: -0.01em; color: var(--ink);
   }
+  #sleepstrip .note { margin: 0 0 12px; }
   #sleepstrip svg { width: 100%; height: auto; display: block; }
 
   /* Six stats plus a full-width status: three rows of two, or two rows of three. */
@@ -463,6 +475,18 @@ const targetFor = (w, active) => {
   return round10(Math.max(assumed, bmrFor(w) * ACTIVITY_MULT - DEFICIT + ACTIVE_CREDIT * active));
 };
 
+// Card icons, so the four are distinguishable at a glance rather than by reading labels.
+// Cutlery for what goes in, a flame for what gets burned off, a moon for sleep.
+const ICON = {
+  cutlery: '<path d="M4.2 1.8v5a1.6 1.6 0 0 0 3.2 0v-5M5.8 1.8v3.4M10 14.2V9a2.6 2.6 0 0 1 2.6-2.6V1.8"/><path d="M4.2 8.4v5.8"/>',
+  // A drumstick loses its bone at this size and reads as a magnifying glass; an egg
+  // stays legible at 15px and is distinct from the other three shapes.
+  egg: '<path d="M8 1.9c2.7 0 4.8 3.5 4.8 6.5A4.8 4.8 0 0 1 8 13.9 4.8 4.8 0 0 1 3.2 8.4c0-3 2.1-6.5 4.8-6.5z"/>',
+  flame: '<path d="M8 1.8c3 3 4.2 4.7 4.2 7A4.2 4.2 0 0 1 3.8 8.8c0-1.7 1-3.1 2.3-4.4.2 1.4.8 2.2 1.7 2.5C7.3 5.1 7.4 3.4 8 1.8z"/>',
+  moon: '<path d="M13.2 9.7A5.6 5.6 0 1 1 6.9 3.1a4.7 4.7 0 0 0 6.3 6.6z"/>',
+};
+const icon = k => `<svg class="ticon" viewBox="0 0 16 16" aria-hidden="true">${ICON[k]}</svg>`;
+
 const activeIn = todayE && todayE.active != null ? todayE.active : null;
 // Sleep is filed against the morning you wake up, so today's row holds last night.
 const SLEEP_MIN = 7;
@@ -476,13 +500,13 @@ const calLeft = _intakeTarget - calIn;
 const protLeft = PROT_TARGET - protIn;
 const noToday = !todayE;
 document.getElementById("today").innerHTML = `
-  <div class="tcard ${calLeft < 0 ? "over" : ""}"><div class="tlabel">Calories left today</div>
+  <div class="tcard ${calLeft < 0 ? "over" : ""}"><div class="tlabel">${icon("cutlery")}Calories left today</div>
     <div class="tval">${calLeft < 0 ? "+" + Math.abs(Math.round(calLeft)) : Math.round(calLeft)}</div>
     <div class="tsub">${noToday ? "nothing logged today" : `${Math.round(calIn)} / ${_intakeTarget} kcal eaten${calLeft < 0 ? " · over" : ""}`}</div></div>
-  <div class="tcard ${protLeft <= 0 ? "good" : ""}"><div class="tlabel">Protein left today</div>
+  <div class="tcard ${protLeft <= 0 ? "good" : ""}"><div class="tlabel">${icon("egg")}Protein left today</div>
     <div class="tval">${protLeft <= 0 ? "✓ done" : Math.round(protLeft) + " g"}</div>
     <div class="tsub">${noToday ? "nothing logged today" : `${Math.round(protIn)} / ${PROT_TARGET} g${protLeft <= 0 ? " · target hit" : ""}`}</div></div>
-  <div class="tcard"><div class="tlabel">Burned today</div>
+  <div class="tcard"><div class="tlabel">${icon("flame")}Burned today</div>
     <div class="tval">${activeIn == null ? "—" : Math.round(activeIn)}</div>
     <div class="tsub">${activeIn == null
       ? "no activity synced yet"
@@ -490,7 +514,7 @@ document.getElementById("today").innerHTML = `
           ? `+${Math.round(ACTIVE_CREDIT * activeIn)} credited (×${ACTIVE_CREDIT})`
           : "still within baseline"}`}</div></div>
   <div class="tcard ${sleepIn == null ? "" : sleepIn >= SLEEP_MIN ? "good" : "over"}">
-    <div class="tlabel">Slept last night</div>
+    <div class="tlabel">${icon("moon")}Slept last night</div>
     <div class="tval">${sleepIn == null ? "—" : sleepIn.toFixed(1) + " h"}</div>
     <div class="tsub">${sleepIn == null ? "not synced yet"
       : sleepIn >= SLEEP_MIN ? `${SLEEP_MIN}+ h · protects muscle` : `under ${SLEEP_MIN} h`}</div></div>`;
@@ -603,7 +627,8 @@ if (nights.some(n => n.h != null)) {
     s += `<text x="${cx}" y="${SH - 4}" text-anchor="middle" font-size="9"
       fill="var(--ink-3)">${label}</text>`;
   });
-  strip.innerHTML = `<div class="slabel">Last 7 nights</div>
+  strip.innerHTML = `<h3>Sleep stats</h3>
+    <p class="note">Hours slept each of the last 7 nights. Amber is under ${SLEEP_MIN} h.</p>
     <svg viewBox="0 0 ${SW} ${SH}" role="img"
       aria-label="Hours slept each of the last seven nights against a 7 hour target">${s}</svg>`;
 }
