@@ -49,6 +49,12 @@ weight = num("weight", 2)
 active = num("active", 0)
 sleep = num("sleep", 2)
 
+# A failed Health query yields 0, which as a weight would silently destroy a real
+# weigh-in already sitting in the row. Only accept a plausible human weight.
+if weight is not None and not (30 <= weight <= 300):
+    print(f"weight of {weight} is not plausible; not recording it")
+    weight = None
+
 # An empty Health query sums to 0. Nobody burns zero active calories or sleeps zero
 # hours, so treat 0 as "no data" rather than writing a misleading value into the log.
 if active == 0:
