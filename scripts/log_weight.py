@@ -14,7 +14,7 @@ Sleep belongs to the morning you wake up, so send it with the morning weigh-in.
 CSV columns:
   date,weight_kg,calories,protein_g,steps,active_kcal,sleep_h,notes
 """
-import json, os, sys, datetime
+import json, os, re, sys, datetime
 
 CSV = "log.csv"
 COLS = 8
@@ -39,15 +39,47 @@ def num(key, ndigits):
     if v in (None, ""):
         return None
     try:
-        return round(float(v), ndigits)
+        return round(float(str(v).replace(",", ".")), ndigits)
     except (TypeError, ValueError):
         print(f"ignoring un-numeric {key}: {v!r}")
         return None
 
 
+def parse_sleep(v):
+    """Hours from whatever the sleep shortcut sends.
+
+    Accepts a bare number (hours, or minutes if over 24), a clock string like
+    "7:52", or the phrasing Health shortcuts print — "7 hours 52 minutes",
+    "7h 52m", "Total Time Asleep: 7 hours 52 minutes".
+    """
+    if v in (None, ""):
+        return None
+    s = str(v).strip().replace(",", ".")
+
+    try:                                    # plain number
+        return float(s)
+    except ValueError:
+        pass
+
+    m = re.fullmatch(r"(\d+):([0-5]\d)", s)  # 7:52
+    if m:
+        return int(m.group(1)) + int(m.group(2)) / 60
+
+    # "7 hours 52 minutes" / "7h 52m", possibly with a label in front
+    h = re.search(r"(\d+(?:\.\d+)?)\s*(?:hours?|hrs?|h)(?![a-z])", s, re.I)
+    mi = re.search(r"(\d+(?:\.\d+)?)\s*(?:minutes?|mins?|m)(?![a-z])", s, re.I)
+    if h or mi:
+        return (float(h.group(1)) if h else 0) + (float(mi.group(1)) if mi else 0) / 60
+
+    print(f"could not read sleep from {v!r}")
+    return None
+
+
 weight = num("weight", 2)
 active = num("active", 0)
-sleep = num("sleep", 2)
+sleep = parse_sleep(payload.get("sleep"))
+if sleep is not None:
+    sleep = round(sleep, 2)
 
 # A failed Health query yields 0, which as a weight would silently destroy a real
 # weigh-in already sitting in the row. Only accept a plausible human weight.
