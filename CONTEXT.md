@@ -37,7 +37,7 @@ Apple Health ──shortcut──► repository_dispatch ──► GitHub Action
 ```
 
 - **`log.csv`** is the single source of truth. Columns:
-  `date,weight_kg,calories,protein_g,steps,active_kcal,notes`
+  `date,weight_kg,calories,protein_g,steps,active_kcal,sleep_h,notes`
 - **`index.html`** fetches it live on every page load. Never hardcode data into it.
 - **GitHub Pages serves `main`.** Anything not on `main` is invisible to her.
 - **`scripts/log_weight.py`** upserts by date and **only writes the columns it is given**, so an
@@ -48,9 +48,14 @@ Apple Health ──shortcut──► repository_dispatch ──► GitHub Action
 
 | Trigger | Sends |
 |---|---|
-| Morning | weight |
+| Morning | weight + last night's sleep |
 | Strava opened | active energy |
 | 22:30 daily | active energy (the day's final total) |
+
+Sleep is filed against the **morning you wake up**, which is why it rides with the weigh-in
+rather than the evening sync. Under 7 h matters here rather than being a nice-to-have: on a
+deficit, short sleep shifts the loss from fat to lean mass (same total kilos, worse composition),
+so a run of short nights is a real explanation for a stalled or muscle-heavy loss.
 
 All three upsert the same row; last write wins. **They only ever touch the current day's row** —
 once a date rolls over, its row is frozen and safe for you to correct by hand. Today's

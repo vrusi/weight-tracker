@@ -103,14 +103,9 @@
   .jends em { font-style: normal; color: var(--ink-3); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; }
 
   /* today hero */
+  /* Four cards: two rows of two on a phone, one row of four on a wide screen. */
   .today { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
-  /* Three cards in a two-column grid orphans the third — let it span instead of
-     leaving a hole. Above 720px all three sit in one row and it spans nothing. */
-  .today .tcard:nth-child(3) { grid-column: 1 / -1; }
-  @media (min-width: 720px) {
-    .today { grid-template-columns: repeat(3, 1fr); }
-    .today .tcard:nth-child(3) { grid-column: auto; }
-  }
+  @media (min-width: 720px) { .today { grid-template-columns: repeat(4, 1fr); } }
 
   /* target explainer */
   .explain { margin: -2px 0 18px; font-size: 13px; color: var(--ink-2); }
@@ -191,13 +186,9 @@
   /* Five stats plus a full-width status. Two columns orphan the fifth, so it spans; above
      720px a six-track grid gives 3 + 2 with the pair splitting the row evenly. Neither
      layout leaves a hole. */
+  /* Six stats plus a full-width status: three rows of two, or two rows of three. */
   .review { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .review .rstat:nth-child(5) { grid-column: 1 / -1; }
-  @media (min-width: 720px) {
-    .review { grid-template-columns: repeat(6, 1fr); }
-    .review .rstat { grid-column: span 2; }
-    .review .rstat:nth-child(4), .review .rstat:nth-child(5) { grid-column: span 3; }
-  }
+  @media (min-width: 720px) { .review { grid-template-columns: repeat(3, 1fr); } }
   .rstat { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; background: var(--surface); }
   .rstat .rlabel { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin-bottom: 7px; }
   .rstat .rval { font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; font-size: 20px; font-weight: 600; letter-spacing: -0.02em; }
@@ -345,7 +336,7 @@
     <h2>Log</h2>
     <div class="tablewrap">
     <table id="logtable">
-      <thead><tr><th>Date</th><th class="num">Weight</th><th class="num">7-day avg</th><th class="num">Target</th><th class="num">kcal</th><th class="num">Protein</th><th class="num">Burned</th><th class="num">Net</th><th>Notes</th></tr></thead>
+      <thead><tr><th>Date</th><th class="num">Weight</th><th class="num">7-day avg</th><th class="num">Target</th><th class="num">kcal</th><th class="num">Protein</th><th class="num">Burned</th><th class="num">Net</th><th class="num">Sleep</th><th>Notes</th></tr></thead>
       <tbody></tbody>
     </table>
     </div>
@@ -389,7 +380,8 @@ function parseLine(line) {
   // A literal 0 means the Health query came back empty, not that she lay still all day —
   // treat it as missing so the target falls back instead of going strict-sedentary.
   if (p[5] && p[5].trim() !== "" && parseFloat(p[5]) > 0) e.active = parseFloat(p[5]);
-  const note = p.slice(6).join(",").trim();
+  if (p[6] && p[6].trim() !== "" && parseFloat(p[6]) > 0) e.sleep = parseFloat(p[6]);
+  const note = p.slice(7).join(",").trim();
   if (note) e.note = note;
   return e;
 }
@@ -463,6 +455,9 @@ const targetFor = (w, active) => {
 };
 
 const activeIn = todayE && todayE.active != null ? todayE.active : null;
+// Sleep is filed against the morning you wake up, so today's row holds last night.
+const SLEEP_MIN = 7;
+const sleepIn = todayE && todayE.sleep != null ? todayE.sleep : null;
 const _intakeTarget = targetFor(last.avg, activeIn);
 document.getElementById("subintake").textContent =
   `~${targetFor(last.avg, null)} kcal, rising with activity`;
@@ -484,7 +479,12 @@ document.getElementById("today").innerHTML = `
       ? "no activity synced yet"
       : `net ${Math.round(calIn - activeIn)} kcal · ${_intakeTarget > targetFor(last.avg, null)
           ? `+${Math.round(ACTIVE_CREDIT * activeIn)} credited (×${ACTIVE_CREDIT})`
-          : "still within baseline"}`}</div></div>`;
+          : "still within baseline"}`}</div></div>
+  <div class="tcard ${sleepIn == null ? "" : sleepIn >= SLEEP_MIN ? "good" : "over"}">
+    <div class="tlabel">Slept last night</div>
+    <div class="tval">${sleepIn == null ? "—" : sleepIn.toFixed(1) + " h"}</div>
+    <div class="tsub">${sleepIn == null ? "not synced yet"
+      : sleepIn >= SLEEP_MIN ? `${SLEEP_MIN}+ h · protects muscle` : `under ${SLEEP_MIN} h`}</div></div>`;
 
 // ---- target explainer (real numbers, so it matches the cards above) ----
 const _assumed = targetFor(last.avg, null);
@@ -532,6 +532,8 @@ const avgActive = activeE.length ? activeE.reduce((s, e) => s + +e.active, 0) / 
 // average activity credited back at 0.75.
 const intakeTarget = targetFor(last.avg, avgActive);
 const avgNet = (avgCal == null || avgActive == null) ? null : avgCal - avgActive;
+const sleepE = last7.filter(e => e.sleep != null && !isNaN(e.sleep));
+const avgSleep = sleepE.length ? sleepE.reduce((s, e) => s + +e.sleep, 0) / sleepE.length : null;
 
 let flag, flagCls;
 if (weighed.length < 4) { flag = "log more — need ≥4 days for a reliable trend"; flagCls = "warn"; }
@@ -552,6 +554,8 @@ document.getElementById("review").innerHTML = `
     <div class="rsub">${avgProt == null ? "not logged" : `target 130 g${avgProt < 110 ? " · low" : ""}`}</div></div>
   <div class="rstat"><div class="rlabel">Avg net (7d)</div><div class="rval">${avgNet == null ? "—" : Math.round(avgNet) + " kcal"}</div>
     <div class="rsub">${avgActive == null ? "no activity synced" : `intake − ${Math.round(avgActive)} kcal burned`}</div></div>
+  <div class="rstat"><div class="rlabel">Avg sleep (7d)</div><div class="rval">${avgSleep == null ? "—" : avgSleep.toFixed(1) + " h"}</div>
+    <div class="rsub">${avgSleep == null ? "no sleep synced" : `target ${SLEEP_MIN}–9 h${avgSleep < SLEEP_MIN ? " · short" : ""}`}</div></div>
   <div class="rstat" style="grid-column: 1 / -1"><div class="rlabel">Status</div>
     <div class="pill ${flagCls}">${flagCls === "good" ? "✓" : "▲"} ${flag}</div></div>`;
 
@@ -638,6 +642,7 @@ document.querySelector("#logtable tbody").innerHTML = [...entries].reverse().map
   <td class="num">${e.protein != null ? Math.round(e.protein) : "—"}</td>
   <td class="num">${e.active != null ? Math.round(e.active) : "—"}</td>
   <td class="num">${e.cal != null && e.active != null ? Math.round(e.cal - e.active) : "—"}</td>
+  <td class="num">${e.sleep != null ? e.sleep.toFixed(1) : "—"}</td>
   <td><div class="notewrap"><div class="notecell">${e.note || ""}</div><button class="notemore" type="button">more</button></div></td></tr>`).join("");
 
 // Only offer "more" on notes that are actually clipped, and toggle the clamp on click.
@@ -667,11 +672,11 @@ function checkRows(lines) {
     const w = parseFloat(wRaw);
     if (wRaw !== "" && isNaN(w)) issues.push(`Line ${ln}: weight not a number ("${wRaw}")`);
     else if (wRaw !== "" && (w < 40 || w > 150)) issues.push(`Line ${ln}: weight ${w} kg looks wrong (out of 40–150)`);
-    [["calories", 2], ["protein", 3], ["steps", 4], ["active energy", 5]].forEach(([name, i]) => {
+    [["calories", 2], ["protein", 3], ["steps", 4], ["active energy", 5], ["sleep", 6]].forEach(([name, i]) => {
       const v = (p[i] || "").trim();
       if (v !== "" && isNaN(parseFloat(v))) issues.push(`Line ${ln}: ${name} not a number ("${v}")`);
     });
-    if (p.length < 6) issues.push(`Line ${ln}: only ${p.length} columns (expected 7)`);
+    if (p.length < 7) issues.push(`Line ${ln}: only ${p.length} columns (expected 8)`);
   });
   return issues;
 }

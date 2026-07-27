@@ -5,18 +5,20 @@ The dashboard (`index.html`) reads `log.csv` live on every load, so **the only t
 ## Log from your phone (no laptop, no Claude needed)
 1. Open the GitHub mobile app (or github.com in the phone browser) → `vrusi/weight-tracker` → `log.csv`.
 2. Tap edit (pencil), add one line at the bottom:
-   `YYYY-MM-DD,weight_kg,calories,protein_g,steps,active_kcal,notes`
-   - Everything except the date is optional. Leave a field empty for unknowns, e.g. `2026-07-22,80.9,,,,,`
-   - Example with more: `2026-07-22,80.9,1800,130,9500,615,gym`
+   `YYYY-MM-DD,weight_kg,calories,protein_g,steps,active_kcal,sleep_h,notes`
+   - Everything except the date is optional. Leave a field empty for unknowns, e.g. `2026-07-22,80.9,,,,,,`
+   - Example with more: `2026-07-22,80.9,1800,130,9500,615,7.4,gym`
 3. Commit. GitHub Pages redeploys in ~1 min; open https://vrusi.github.io/weight-tracker/ to see it.
 
 ## Log via Claude (if a session can push to the repo)
 Append the row to `log.csv`, commit, and push. Then reply with one terse line: current weight, 7-day rolling average, target weight for today, and the gap (avg − target).
 
 ## Column format
-`date,weight_kg,calories,protein_g,steps,active_kcal,notes` — date is `YYYY-MM-DD`. Only the date is required; everything else optional; avoid commas inside notes (use `;`).
+`date,weight_kg,calories,protein_g,steps,active_kcal,sleep_h,notes` — date is `YYYY-MM-DD`. Only the date is required; everything else optional; avoid commas inside notes (use `;`).
 
 `active_kcal` is Apple Health's active energy for the day (workouts from Strava/Heavy land there too). The dashboard credits **75%** of it back on top of a sedentary base target, because watches overestimate burn. A day with no `active_kcal` falls back to the old flat target.
+
+`sleep_h` is hours asleep **last night**, filed against the morning you woke up — so it rides along with the morning weigh-in, not the evening activity sync. Under 7 h is flagged: on a deficit, short sleep shifts the loss from fat to muscle.
 
 ## Natural-language & photo logging (preferred)
 Veronika will usually message food in plain language ("had a Billa protein sandwich and 2 scoops of protein") or send a photo of a meal. Steps for a Claude session with repo write access:
