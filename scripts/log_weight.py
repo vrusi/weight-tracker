@@ -102,6 +102,13 @@ if sleep is not None and sleep > 24:
     print(f"sleep of {sleep} looks like minutes; converting to hours")
     sleep = round(sleep / 60, 2)
 
+# Under an hour is not a night's sleep, it is a mangled value — a Number-typed JSON
+# field coercing "27 Jul 2026 at 01:38..." down to 27, say. Refuse rather than record
+# something that looks plausible enough to go unnoticed.
+if sleep is not None and sleep < 1:
+    print(f"sleep of {sleep} h is not a plausible night; not recording it")
+    sleep = None
+
 if weight is None and active is None and sleep is None:
     print("no weight, active energy or sleep provided; nothing to do")
     sys.exit(0)
