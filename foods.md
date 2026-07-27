@@ -31,6 +31,7 @@ Add new items as they come up.
 | Banana | 1 medium (~118 g) | 105 | 1.3 |
 | Tesco lentil & rice high protein cakes | 1 piece | 35 | 2.5 |
 | Red cabbage salad | 1 portion (~100 g) | 60 | 1.5 |
+| Red cabbage salad, deli tub ~2/3 full | ~170 g | 110 | 2 |
 | Mayoketchup | 1 tbsp | 55 | 0.3 |
 | Mattoni Multi (flavoured water) | 500 ml | 100 | 0 |
 | Vegan gyros tortilla (pea-protein seitan, veg, mayo) | 1 wrap | 600 | 30 |
