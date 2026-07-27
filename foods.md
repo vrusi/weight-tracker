@@ -46,6 +46,7 @@ Add new items as they come up.
 | Weider Premium EAA | 1 serving (~11 g) | 35 | 8 |
 | Tomato | 1 medium (~120 g) | 22 | 1 |
 | Carrot | 1 medium (~60 g) | 25 | 1 |
+| dm Sportness L-Carnitine liquid | 25 ml | 1 | 0 |
 
 ## Notes
 - Creatine: 0 kcal. Effective dose is 3–5 g/day; more is excreted, causes GI upset, and adds intracellular water (inflates scale weight).
