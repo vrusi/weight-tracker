@@ -515,7 +515,7 @@ journeyEl.innerHTML = `
     <span class="spark" style="left:${pct}%; top:12px; margin-left:-15px"></span>
     <span class="spark" style="left:${pct}%; top:10px; margin-left:9px; animation-delay:1s"></span>
     <span class="spark" style="left:${pct}%; top:-2px; margin-left:14px; animation-delay:1.7s"></span></div>
-  <div class="jends"><span><b>81.25</b> <em>start</em></span><span><em>goal</em> <b>73.1</b></span></div>
+  <div class="jends"><span><b>81.25</b> <em>start</em></span><span><em>goal</em> <b id="jgoal">73.1</b></span></div>
   <p class="jnote">The dashed mark is where the plan puts you today (${targetNow.toFixed(1)} kg) —
     you're ${Math.abs(avgVsTarget).toFixed(1)} kg ${avgVsTarget <= 0 ? "ahead of" : "behind"} it.</p>`;
 // animate fill + marker in on load
@@ -939,10 +939,11 @@ explain.querySelector("summary").addEventListener("click", ev => {
 });
 // celebrate if today's protein target is already hit; also poke the marker for a burst
 if (!noToday && protLeft <= 0) setTimeout(confetti, 500);
-// Confetti stays as an unadvertised treat on the bar — no cursor, no tooltip, nothing that
-// suggests the marker can be dragged.
-const jt = document.querySelector(".jtrack");
-if (jt) jt.addEventListener("click", confetti);
+// Confetti stays as an unadvertised treat, but on the goal number rather than the bar: the
+// track is full-width, so hanging it there turned a 15px dot into a strip across the card
+// that fired on any stray tap. No cursor or tooltip — nothing here suggests a drag.
+const jg = document.getElementById("jgoal");
+if (jg) jg.addEventListener("click", confetti);
 
 // ---- motivation photo: a different one at random on every load ----
 // Add pictures by dropping them in motivation/ and listing them in motivation.json.
