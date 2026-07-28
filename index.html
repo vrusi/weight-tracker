@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Weight Tracker — 81.25 → 73.1 kg</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Weight Quest — 81.25 -> 73.1 kg</title>
+<!-- NES.css supplies the pixel component chrome (containers, table, balloon, badges).
+     Vendored rather than CDN-loaded so the page has no third-party dependency. -->
+<link rel="stylesheet" href="vendor/nes-core.min.css">
 <script>
   // Always reopen at the top. Every tile, the chart and the table are built by JS after
   // log.csv arrives, so at restore time the document is still nearly empty and the browser
@@ -14,369 +14,307 @@
   if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 </script>
 <style>
+  @font-face {
+    font-family: "Press Start 2P"; font-style: normal; font-weight: 400;
+    src: url("vendor/press-start-2p.woff2") format("woff2"); font-display: swap;
+  }
+  @font-face {
+    font-family: "VT323"; font-style: normal; font-weight: 400;
+    src: url("vendor/vt323.woff2") format("woff2"); font-display: swap;
+  }
+
+  /* Two families doing two jobs: Press Start 2P is gorgeous but ~2x as wide per character,
+     so it carries only headings, labels and the hero numbers. VT323 is a terminal face —
+     compact and readable at 20px — and carries every run of actual prose. */
   :root {
-    --surface: #ECEFE8;        /* warm sage paper */
-    --card: #FBFCF9;
-    --ink: #1C231D;
-    --ink-2: #566057;
-    --ink-3: #8C968C;
-    --line: #E0E5DB;
-    --accent: #2F7D4E;         /* pine */
-    --accent-weak: rgba(47, 125, 78, 0.10);
-    --target: #A7ADA1;
-    --good-bg: #E2EFE3; --good-ink: #1F6B3E;
-    --warn-bg: #F4E8D3; --warn-ink: #8A5712;
-    --shadow: 0 1px 2px rgba(28, 35, 29, 0.05), 0 1px 1px rgba(28, 35, 29, 0.03);
+    --display: "Press Start 2P", "Courier New", monospace;
+    --body: "VT323", "Courier New", monospace;
+
+    --bg: #D7E5CF;
+    --bg-2: #CEDDC6;
+    --panel: #F4F8EF;
+    --panel-2: #E5EFDD;
+    --ink: #1B2A1B;
+    --edge: #1B2A1B;
+    --muted: #5C6D5C;
+    --accent: #2C7A46;
+    --accent-2: #7FB069;
+    --track: #BCD0B5;
+    --good: #1F6B3E; --good-bg: #CCE6CC;
+    --warn: #9A5406; --warn-bg: #F5E1BE;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --surface: #13160F;
-      --card: #1B1E17;
-      --ink: #E8EBE2;
-      --ink-2: #A3ADA0;
-      --ink-3: #6C766B;
-      --line: #2A2E26;
-      --accent: #4FA46B;
-      --accent-weak: rgba(79, 164, 107, 0.15);
-      --target: #5C645A;
-      --good-bg: #18321F; --good-ink: #83CF98;
-      --warn-bg: #382C15; --warn-ink: #E4B369;
-      --shadow: none;
+      --bg: #0E140D; --bg-2: #131A12; --panel: #1A231A; --panel-2: #212C20;
+      --ink: #DCE9D4; --edge: #DCE9D4; --muted: #8CA08B;
+      --accent: #6BC98A; --accent-2: #A5DC95; --track: #2A3629;
+      --good: #8FD9A4; --good-bg: #1B3520;
+      --warn: #E8B25E; --warn-bg: #3A2C13;
     }
   }
   :root[data-theme="light"] {
-    --surface: #ECEFE8; --card: #FBFCF9; --ink: #1C231D; --ink-2: #566057;
-    --ink-3: #8C968C; --line: #E0E5DB; --accent: #2F7D4E; --accent-weak: rgba(47, 125, 78, 0.10);
-    --target: #A7ADA1; --good-bg: #E2EFE3; --good-ink: #1F6B3E; --warn-bg: #F4E8D3; --warn-ink: #8A5712;
-    --shadow: 0 1px 2px rgba(28, 35, 29, 0.05), 0 1px 1px rgba(28, 35, 29, 0.03);
+    --bg: #D7E5CF; --bg-2: #CEDDC6; --panel: #F4F8EF; --panel-2: #E5EFDD;
+    --ink: #1B2A1B; --edge: #1B2A1B; --muted: #5C6D5C;
+    --accent: #2C7A46; --accent-2: #7FB069; --track: #BCD0B5;
+    --good: #1F6B3E; --good-bg: #CCE6CC; --warn: #9A5406; --warn-bg: #F5E1BE;
   }
   :root[data-theme="dark"] {
-    --surface: #13160F; --card: #1B1E17; --ink: #E8EBE2; --ink-2: #A3ADA0;
-    --ink-3: #6C766B; --line: #2A2E26; --accent: #4FA46B; --accent-weak: rgba(79, 164, 107, 0.15);
-    --target: #5C645A; --good-bg: #18321F; --good-ink: #83CF98; --warn-bg: #382C15; --warn-ink: #E4B369;
-    --shadow: none;
+    --bg: #0E140D; --bg-2: #131A12; --panel: #1A231A; --panel-2: #212C20;
+    --ink: #DCE9D4; --edge: #DCE9D4; --muted: #8CA08B;
+    --accent: #6BC98A; --accent-2: #A5DC95; --track: #2A3629;
+    --good: #8FD9A4; --good-bg: #1B3520; --warn: #E8B25E; --warn-bg: #3A2C13;
   }
 
   * { box-sizing: border-box; }
-  html { background: var(--surface); }
+  html { background: var(--bg); }
   body {
-    font-family: "IBM Plex Sans", system-ui, sans-serif;
-    color: var(--ink); margin: 0; padding: 40px 20px 64px;
-    -webkit-font-smoothing: antialiased;
+    font-family: var(--body); font-size: 20px; line-height: 1.35;
+    color: var(--ink); margin: 0; padding: 26px 14px 56px;
+    /* 4px checkerboard, barely there — gives the flat colour a woven, low-res texture */
+    background:
+      repeating-conic-gradient(var(--bg) 0% 25%, var(--bg-2) 0% 50%) 0 0 / 8px 8px;
+    image-rendering: pixelated;
+    -webkit-font-smoothing: none; font-smooth: never;
   }
-  .wrap { max-width: 880px; margin: 0 auto; }
-  .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  .disp { font-family: var(--display); line-height: 1.6; letter-spacing: 0; }
 
-  /* header */
-  header { margin-bottom: 26px; }
-  .eyebrow {
-    font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
-    color: var(--accent); font-weight: 600; margin: 0 0 10px;
+  /* ---- NES.css re-skin ----
+     The framework bakes its border colour into an inline SVG, so each themed variant needs
+     its own copy of the same path. Everything else is driven off the variables above. */
+  .nes-container {
+    padding: 16px 16px; margin: 0; background: var(--panel);
+    border-color: var(--edge); color: var(--ink);
   }
-  h1 {
-    font-family: "Fraunces", Georgia, serif; font-optical-sizing: auto;
-    font-size: clamp(30px, 6.5vw, 46px); font-weight: 500; margin: 0;
-    letter-spacing: -0.01em; line-height: 1.05; text-wrap: balance;
+  .nes-container.is-rounded, .nes-balloon {
+    border-image-source: url('data:image/svg+xml;utf8,<svg version="1.1" width="8" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 h1 v1 h-1 z M4 1 h1 v1 h-1 z M2 2 h1 v1 h-1 z M5 2 h1 v1 h-1 z M1 3 h1 v1 h-1 z M6 3 h1 v1 h-1 z M1 4 h1 v1 h-1 z M6 4 h1 v1 h-1 z M2 5 h1 v1 h-1 z M5 5 h1 v1 h-1 z M3 6 h1 v1 h-1 z M4 6 h1 v1 h-1 z" fill="rgb(27,42,27)"/></svg>');
   }
-  h1 .arw { color: var(--accent); font-weight: 600; }
-  .sub { color: var(--ink-2); margin: 14px 0 0; font-size: 14px; letter-spacing: 0.01em; }
-  .sub strong { color: var(--ink); font-weight: 600; }
+  @media (prefers-color-scheme: dark) {
+    .nes-container.is-rounded, .nes-balloon {
+      border-image-source: url('data:image/svg+xml;utf8,<svg version="1.1" width="8" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 h1 v1 h-1 z M4 1 h1 v1 h-1 z M2 2 h1 v1 h-1 z M5 2 h1 v1 h-1 z M1 3 h1 v1 h-1 z M6 3 h1 v1 h-1 z M1 4 h1 v1 h-1 z M6 4 h1 v1 h-1 z M2 5 h1 v1 h-1 z M5 5 h1 v1 h-1 z M3 6 h1 v1 h-1 z M4 6 h1 v1 h-1 z" fill="rgb(220,233,212)"/></svg>');
+    }
+  }
+  :root[data-theme="dark"] .nes-container.is-rounded,
+  :root[data-theme="dark"] .nes-balloon {
+    border-image-source: url('data:image/svg+xml;utf8,<svg version="1.1" width="8" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 h1 v1 h-1 z M4 1 h1 v1 h-1 z M2 2 h1 v1 h-1 z M5 2 h1 v1 h-1 z M1 3 h1 v1 h-1 z M6 3 h1 v1 h-1 z M1 4 h1 v1 h-1 z M6 4 h1 v1 h-1 z M2 5 h1 v1 h-1 z M5 5 h1 v1 h-1 z M3 6 h1 v1 h-1 z M4 6 h1 v1 h-1 z" fill="rgb(220,233,212)"/></svg>');
+  }
+  /* The balloon's tail is built from box-shadows with the colours baked in (#fff / #212529),
+     so it has to be re-declared to follow the palette instead of flashing white in dark mode. */
+  .nes-balloon.from-left::before {
+    background-color: var(--panel); border-right-color: var(--edge); border-left-color: var(--edge);
+  }
+  .nes-balloon.from-left::after {
+    color: var(--edge); background-color: var(--panel);
+    box-shadow: -4px 0, 4px 0, -4px 4px var(--panel), 0 4px, -8px 4px, -4px 8px, -8px 8px;
+  }
+  .nes-container.with-title > .title {
+    font-family: var(--display); font-size: 11px; background: var(--panel);
+    color: var(--ink); margin: -1.9rem 0 1rem; padding: 0 .6rem;
+  }
 
-  /* descent / journey bar */
-  .journey {
-    margin: 26px 0; padding: 18px 20px; background: var(--card);
-    border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow);
-  }
-  .jtop { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
-  .jtop .jlabel { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
-  .jtop .jstat { font-size: 13px; color: var(--ink-2); }
-  .jtop .jstat b { color: var(--accent); font-weight: 600; }
-  /* The marker is a readout, never a control. A ringed circle centred on a track is the
-     universal look of a draggable slider thumb, so it's a flush tick with the value printed
-     above it instead. */
-  .jtrack { position: relative; height: 8px; margin-top: 27px; border-radius: 999px; background: var(--accent-weak); overflow: visible; }
-  .jfill { position: absolute; left: 0; top: 0; height: 100%; border-radius: 999px; background: var(--accent); }
-  .jcap {
-    position: absolute; top: 50%; width: 4px; height: 16px; border-radius: 2px;
-    background: var(--accent); transform: translate(-50%, -50%);
-  }
+  /* ---- header ---- */
+  header { margin: 4px 0 20px; }
+  .eyebrow { font-family: var(--display); font-size: 9px; color: var(--accent); margin: 0 0 12px; }
+  h1 { font-family: var(--display); font-size: clamp(14px, 4.4vw, 26px); margin: 0; line-height: 1.55; color: var(--ink); }
+  h1 .arw { color: var(--accent); }
+  .sub { color: var(--muted); margin: 12px 0 0; font-size: 19px; }
+  .sub strong { color: var(--ink); font-weight: 400; }
+  .coach { margin: 14px 0 0; font-size: 19px; color: var(--ink); }
+  .nes-balloon { background: var(--panel); color: var(--ink); font-size: 19px; padding: 12px 14px; }
+
+  /* ---- journey: an HP bar, because that is what this is ---- */
+  .journey { margin-bottom: 18px; }
+  .jtop { display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
+  .jlabel { font-family: var(--display); font-size: 10px; color: var(--muted); }
+  .jstat { font-size: 19px; color: var(--muted); }
+  .jstat b { font-family: var(--display); font-size: 11px; color: var(--accent); font-weight: 400; }
+  /* Segmented rather than continuous: 20 cells read as a game meter, and they give the
+     "plan" marker an exact cell to live in instead of a sub-pixel tick. */
+  .jtrack { display: flex; gap: 2px; margin: 22px 0 0; position: relative; }
+  .jcell { flex: 1 1 0; height: 22px; background: var(--track); border: 2px solid var(--edge); }
+  .jcell.on { background: var(--accent); }
+  .jcell.plan { background: repeating-linear-gradient(45deg, var(--warn) 0 3px, transparent 3px 6px), var(--track); }
+  .jcell.on.plan { background: repeating-linear-gradient(45deg, var(--warn) 0 3px, transparent 3px 6px), var(--accent); }
   .jnow {
-    position: absolute; bottom: 15px; transform: translateX(-50%); white-space: nowrap;
-    font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums;
-    font-size: 12px; font-weight: 600; color: var(--accent);
+    position: absolute; bottom: 26px; transform: translateX(-50%); white-space: nowrap;
+    font-family: var(--display); font-size: 11px; color: var(--accent);
   }
-  /* Where the plan says today should be — dashed, echoing the target line on the chart, so
-     "ahead of pace" is something you can see rather than two numbers to compare. */
-  /* Tall enough to clear the 8px track top and bottom, and drawn in ink rather than the
-     chart's --target grey: when you're ahead of plan this mark falls *inside* the green
-     fill, where a soft grey disappears. The dashes keep the visual rhyme with the chart. */
-  .jplan {
-    position: absolute; top: 50%; width: 2px; height: 22px; transform: translate(-50%, -50%);
-    background: repeating-linear-gradient(var(--ink-2) 0 3px, transparent 3px 5.5px);
+  .jends { display: flex; justify-content: space-between; margin-top: 12px; font-size: 18px; color: var(--muted); }
+  .jends b { font-family: var(--display); font-size: 11px; color: var(--ink); font-weight: 400; }
+  .jnote { margin: 12px 0 0; font-size: 18px; color: var(--muted); line-height: 1.4; }
+
+  /* ---- today: four status panels ---- */
+  .today { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 18px 0; }
+  @media (min-width: 760px) { .today { grid-template-columns: repeat(4, 1fr); } }
+  .tcard { padding: 14px 12px; background: var(--panel); }
+  .tcard .tlabel {
+    font-family: var(--display); font-size: 8px; line-height: 1.7; color: var(--muted);
+    margin-bottom: 12px; display: flex; align-items: flex-start; gap: 6px;
   }
-  .jnote { margin: 11px 0 0; font-size: 12px; color: var(--ink-3); line-height: 1.5; }
-  .jends { display: flex; justify-content: space-between; margin-top: 12px; font-size: 12.5px; color: var(--ink-2); }
-  .jends b { font-family: "IBM Plex Mono", monospace; color: var(--ink); font-weight: 600; }
-  .jends em { font-style: normal; color: var(--ink-3); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .pxicon { flex: 0 0 auto; width: 16px; height: 16px; fill: currentColor; }
+  .tcard .tval { font-family: var(--display); font-size: clamp(15px, 4.6vw, 22px); color: var(--accent); line-height: 1.4; display: inline-block; }
+  .tcard.over .tval { color: var(--warn); }
+  .tcard.good .tval { color: var(--good); }
+  .tcard .tsub { font-size: 18px; color: var(--muted); margin-top: 10px; line-height: 1.3; }
 
-  /* today hero */
-  /* Four cards: two rows of two on a phone, one row of four on a wide screen. */
-  .today { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
-  @media (min-width: 720px) { .today { grid-template-columns: repeat(4, 1fr); } }
-
-  /* target explainer */
-  .explain { margin: -2px 0 18px; font-size: 13px; color: var(--ink-2); }
+  /* ---- explainer ---- */
+  .explain { margin-bottom: 18px; font-size: 19px; color: var(--muted); }
   .explain summary {
-    cursor: pointer; color: var(--accent); font-weight: 600; font-size: 12.5px;
-    list-style: none; display: inline-flex; align-items: center; gap: 7px;
+    cursor: pointer; font-family: var(--display); font-size: 10px; color: var(--accent);
+    list-style: none; display: inline-flex; align-items: center; gap: 9px;
   }
   .explain summary::-webkit-details-marker { display: none; }
-  /* chevron drawn in CSS so it can rotate smoothly rather than swapping glyphs */
   .explain summary::after {
-    content: ""; width: 6px; height: 6px; opacity: 0.7;
-    border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
-    transform: translateY(-2px) rotate(45deg);
-    transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+    content: ""; width: 0; height: 0; opacity: 0.85;
+    border-left: 6px solid currentColor; border-top: 5px solid transparent; border-bottom: 5px solid transparent;
+    transition: transform 0.3s steps(4, end);
   }
-  .explain[open] summary::after { transform: translateY(1px) rotate(225deg); }
+  .explain[open] summary::after { transform: rotate(90deg); }
   .explain-body { overflow: hidden; }
-  @media (prefers-reduced-motion: reduce) {
-    .explain summary::after { transition: none; }
-  }
-  .explain summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
-  .explain p { margin: 11px 0 0; line-height: 1.6; max-width: 62ch; }
-  .explain b { color: var(--ink); font-weight: 600; }
-  .explain .eg {
-    display: inline-block; font-family: "IBM Plex Mono", monospace; font-size: 12px;
-    background: var(--accent-weak); color: var(--ink); padding: 2px 7px; border-radius: 5px;
-  }
-  .tcard {
-    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
-    padding: 20px; box-shadow: var(--shadow); position: relative; overflow: hidden;
-  }
-  .tcard::before {
-    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--accent);
-  }
-  .tcard.over::before { background: var(--warn-ink); }
-  .tcard.good::before { background: var(--good-ink); }
-  .tcard .tlabel {
-    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--ink-3); font-weight: 600; margin-bottom: 10px;
-    display: flex; align-items: flex-start; gap: 6px;
-  }
-  /* Inline with the label rather than floated in a corner, so it can't collide with the
-     label wrapping to two lines on a narrow card. */
-  .tcard .ticon {
-    flex: 0 0 auto; width: 15px; height: 15px; margin-top: -1px;
-    fill: none; stroke: currentColor; stroke-width: 1.5;
-    stroke-linecap: round; stroke-linejoin: round;
-  }
-  .tcard .tval {
-    font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums;
-    font-size: clamp(34px, 9vw, 46px); font-weight: 600; letter-spacing: -0.03em;
-    line-height: 0.95; color: var(--accent);
-  }
-  .tcard.over .tval { color: var(--warn-ink); }
-  .tcard.good .tval { color: var(--good-ink); }
-  .tcard .tsub { font-size: 12.5px; color: var(--ink-2); margin-top: 10px; }
+  .explain p { margin: 12px 0 0; line-height: 1.4; max-width: 64ch; }
+  .explain b { color: var(--ink); }
+  .explain .eg { display: inline-block; font-size: 18px; background: var(--panel-2); color: var(--ink); padding: 1px 7px; border: 2px solid var(--edge); }
+  @media (prefers-reduced-motion: reduce) { .explain summary::after { transition: none; } }
 
-  /* stat tiles */
-  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin: 14px 0; }
-  .tile { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; box-shadow: var(--shadow); }
-  .tile .label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin-bottom: 8px; }
-  .tile .value { font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; font-size: 27px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; }
-  .tile .unit { font-size: 14px; color: var(--ink-3); font-weight: 500; letter-spacing: 0; }
-  .tile .delta { font-size: 12px; color: var(--ink-2); margin-top: 6px; }
+  /* ---- tiles ---- */
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 18px 0; }
+  @media (min-width: 760px) { .tiles { grid-template-columns: repeat(4, 1fr); } }
+  .tile { padding: 13px 12px; background: var(--panel); }
+  .tile .label { font-family: var(--display); font-size: 8px; color: var(--muted); margin-bottom: 12px; }
+  .tile .value { font-family: var(--display); font-size: 16px; color: var(--ink); line-height: 1.4; }
+  .tile .unit { font-family: var(--body); font-size: 18px; color: var(--muted); }
+  .tile .delta { font-size: 18px; color: var(--muted); margin-top: 8px; line-height: 1.3; }
 
-  .pill { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 5px 12px; font-size: 13px; font-weight: 600; margin-top: 2px; }
-  .pill.good { background: var(--good-bg); color: var(--good-ink); }
-  .pill.warn { background: var(--warn-bg); color: var(--warn-ink); }
+  /* Pixel badges — ASCII markers only, since Press Start 2P has no glyph for the tick and
+     triangle the old design used and they render as tofu. */
+  .pill { display: inline-block; font-family: var(--display); font-size: 9px; line-height: 1.6; padding: 6px 8px; border: 2px solid var(--edge); }
+  .pill.good { background: var(--good-bg); color: var(--good); }
+  .pill.warn { background: var(--warn-bg); color: var(--warn); }
 
-  /* cards */
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px; box-shadow: var(--shadow); margin-top: 20px; }
-  .card h2 { font-family: "Fraunces", Georgia, serif; font-weight: 500; font-size: 20px; margin: 0 0 4px; letter-spacing: -0.01em; }
-  .card .note { font-size: 13px; color: var(--ink-2); margin: 0 0 16px; line-height: 1.5; }
+  /* ---- cards ---- */
+  .card { margin-top: 18px; background: var(--panel); }
+  .card .note { font-size: 18px; color: var(--muted); margin: 0 0 14px; line-height: 1.35; }
 
   .chartbox { position: relative; }
-  #chart { width: 100%; height: auto; display: block; }
+  #chart { width: 100%; height: auto; display: block; image-rendering: pixelated; }
   #tip {
     position: absolute; pointer-events: none; display: none;
-    background: var(--ink); color: var(--card); border-radius: 9px; padding: 9px 12px;
-    font-size: 12.5px; line-height: 1.5; white-space: nowrap; transform: translate(-50%, -112%);
-    font-family: "IBM Plex Mono", monospace; box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+    background: var(--ink); color: var(--panel); padding: 7px 9px; border: 2px solid var(--edge);
+    font-size: 17px; line-height: 1.3; white-space: nowrap; transform: translate(-50%, -112%);
   }
-  #tip .d { opacity: 0.7; }
+  #tip .d { opacity: 0.75; }
 
-  /* review */
-  /* Five stats plus a full-width status. Two columns orphan the fifth, so it spans; above
-     720px a six-track grid gives 3 + 2 with the pair splitting the row evenly. Neither
-     layout leaves a hole. */
-  /* sleep strip */
-  #sleepstrip { margin-top: 16px; }
-  /* A real section heading in the display face, matching the card titles — a small
-     uppercase label read as just another stat caption and the bars went unidentified. */
-  #sleepstrip { border-top: 1px solid var(--line); padding-top: 16px; }
-  #sleepstrip h3 {
-    font-family: "Fraunces", Georgia, serif; font-weight: 500; font-size: 18px;
-    margin: 0 0 3px; letter-spacing: -0.01em; color: var(--ink);
-  }
+  /* ---- sleep strip ---- */
+  #sleepstrip { margin-top: 16px; border-top: 4px solid var(--track); padding-top: 16px; }
+  #sleepstrip h3 { font-family: var(--display); font-size: 11px; margin: 0 0 8px; color: var(--ink); }
   #sleepstrip .note { margin: 0 0 12px; }
-  #sleepstrip svg { width: 100%; height: auto; display: block; }
+  #sleepstrip svg { width: 100%; height: auto; display: block; image-rendering: pixelated; }
 
-  /* Six stats plus a full-width status: three rows of two, or two rows of three. */
-  .review { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  @media (min-width: 720px) { .review { grid-template-columns: repeat(3, 1fr); } }
-  .rstat { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; background: var(--surface); }
-  .rstat .rlabel { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin-bottom: 7px; }
-  .rstat .rval { font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; font-size: 20px; font-weight: 600; letter-spacing: -0.02em; }
-  .rstat .rsub { font-size: 12px; color: var(--ink-2); margin-top: 4px; }
+  /* ---- weekly review ---- */
+  .review { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (min-width: 760px) { .review { grid-template-columns: repeat(3, 1fr); } }
+  .rstat { border: 2px solid var(--edge); padding: 11px 12px; background: var(--panel-2); }
+  .rlabel { font-family: var(--display); font-size: 8px; color: var(--muted); margin-bottom: 11px; line-height: 1.6; }
+  .rval { font-family: var(--display); font-size: 13px; color: var(--ink); line-height: 1.4; }
+  .rsub { font-size: 18px; color: var(--muted); margin-top: 6px; line-height: 1.3; }
 
-  /* table */
-  /* Bounded, scrollable log — the notes make rows tall, so cap the height and let it scroll
-     in both directions with the header pinned. */
-  .tablewrap { overflow: auto; max-height: 44vh; overscroll-behavior: contain; }
-  .tablewrap thead th { position: sticky; top: 0; z-index: 1; background: var(--card); }
-  /* Clamp long notes so a row stays scannable, but let any clipped note be opened. */
+  /* ---- log ---- */
+  /* Hand-styled rather than .nes-table: that class hardcodes background-color:#fff (white
+     cells in dark mode) and table-layout:fixed, which clipped the Notes column outright. */
+  .tablewrap { overflow: auto; max-height: 46vh; overscroll-behavior: contain; border: 3px solid var(--edge); }
+  table { width: 100%; border-collapse: collapse; font-size: 18px; color: var(--ink); background: var(--panel); }
+  th, td { padding: 6px 9px; border: 2px solid var(--track); }
+  thead th { font-family: var(--display); font-size: 8px; line-height: 1.6; color: var(--muted); text-align: left; white-space: nowrap; position: sticky; top: 0; z-index: 1; background: var(--panel); border-bottom: 3px solid var(--edge); }
+  td { color: var(--muted); }
+  td:first-child { color: var(--ink); white-space: nowrap; }
+  th.num, td.num { text-align: right; }
   .notewrap { min-width: 22ch; max-width: 46ch; }
-  .notecell { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-    overflow: hidden; }
+  .notecell { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .notewrap.open .notecell { display: block; -webkit-line-clamp: none; }
-  /* The whole clipped note toggles, not just the word — on a phone an 11px "more" is a
-     miss-and-scroll. The button stays as the visible affordance. */
   .notewrap.truncated .notecell { cursor: pointer; }
-  .notemore {
-    display: none; margin: 2px -8px 0; padding: 7px 8px; border: 0; background: none;
-    font: inherit; font-size: 11.5px; font-weight: 600; color: var(--accent); cursor: pointer;
-  }
+  .notemore { display: none; margin: 2px -8px 0; padding: 7px 8px; border: 0; background: none; font-family: var(--display); font-size: 8px; color: var(--accent); cursor: pointer; }
   .notewrap.truncated .notemore { display: inline-block; }
-  .notemore:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  thead th { text-align: left; font-size: 10.5px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; padding: 9px 12px; border-bottom: 1.5px solid var(--line); white-space: nowrap; }
-  td { padding: 9px 12px; border-bottom: 1px solid var(--line); color: var(--ink-2); }
-  tbody tr:last-child td { border-bottom: none; }
-  td:first-child { color: var(--ink); font-weight: 500; white-space: nowrap; }
-  th.num, td.num { text-align: right; font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; }
 
-  /* On a phone the ten columns run ~500px off the right edge behind a horizontal scroll,
-     and nothing signals they are there. Below 720px the same markup becomes one card per
-     day: date and weight as the heading, the rest as labelled chips, notes underneath. */
-  @media (max-width: 719px) {
-    .tablewrap { max-height: 52vh; overflow-x: hidden; overflow-y: auto; }
+  /* On a phone the ten columns run far off the right edge behind a horizontal scroll, and
+     nothing signals they are there. Below 760px each day becomes its own panel. */
+  @media (max-width: 759px) {
+    .tablewrap { max-height: 54vh; overflow-x: hidden; overflow-y: auto; }
     #logtable, #logtable tbody { display: block; }
+    #logtable { border: 0; margin: 0; }
     #logtable thead { display: none; }
     #logtable tr {
       display: flex; flex-wrap: wrap; gap: 11px 14px;
-      padding: 13px 15px; margin-bottom: 10px; background: var(--surface);
-      border: 1px solid var(--line); border-radius: 12px;
+      padding: 12px 12px; margin-bottom: 10px; background: var(--panel-2);
+      border: 2px solid var(--edge);
     }
     #logtable tr:last-child { margin-bottom: 0; }
     #logtable td { display: block; padding: 0; border: none; text-align: left; }
+    /* VT323 for the chip captions, not the display face: "7-day avg" in Press Start 2P is
+       wider than the chip and wraps one character per line. */
     #logtable td::before {
-      content: attr(data-label); display: block; margin-bottom: 3px;
-      font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--ink-3); font-weight: 600;
+      content: attr(data-label); display: block; margin-bottom: 1px; white-space: nowrap;
+      font-family: var(--body); font-size: 15px; line-height: 1.2; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.04em;
     }
-    /* A column with nothing logged shouldn't spend a chip saying so. Weight is the
-       exception — a blank one is the point on a day away from the scale. */
     #logtable td.empty:not(.c-weight) { display: none; }
-    /* Date and weight fill the heading line; what's left over is narrower than a chip's
-       min-width, so the stats always start on the next line. */
-    #logtable td.c-date, #logtable td.c-weight {
-      font-size: 15px; font-weight: 600; color: var(--ink);
-    }
+    #logtable td.c-date, #logtable td.c-weight { font-family: var(--display); font-size: 11px; color: var(--ink); }
     #logtable td.c-date { flex: 1 1 60%; }
     #logtable td.c-weight { flex: 1 1 30%; text-align: right; }
     #logtable td.c-date::before, #logtable td.c-weight::before { display: none; }
-    #logtable td.c-weight:not(.empty)::after {
-      content: " kg"; font-size: 11.5px; font-weight: 500; color: var(--ink-3);
-    }
-    #logtable td:not(.c-date):not(.c-weight):not(.c-note) { flex: 1 1 auto; min-width: 58px; }
+    #logtable td.c-weight:not(.empty)::after { content: " kg"; font-family: var(--body); font-size: 16px; color: var(--muted); }
+    #logtable td:not(.c-date):not(.c-weight):not(.c-note) { flex: 1 1 auto; min-width: 76px; }
     #logtable td.c-note { flex: 1 1 100%; }
     .notewrap { min-width: 0; max-width: none; }
   }
 
-  footer { margin-top: 30px; font-size: 12.5px; color: var(--ink-3); text-align: center; letter-spacing: 0.02em; }
-
-  details summary { cursor: pointer; font-size: 13px; color: var(--ink-2); margin-top: 14px; user-select: none; }
+  footer { margin-top: 26px; font-size: 18px; color: var(--muted); text-align: center; }
+  details summary { cursor: pointer; font-size: 18px; color: var(--muted); margin-top: 12px; user-select: none; }
   details summary:hover { color: var(--accent); }
   pre#rawcsv {
-    overflow-x: auto; margin-top: 12px; padding: 14px; background: var(--surface);
-    border: 1px solid var(--line); border-radius: 10px;
-    font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; line-height: 1.7; color: var(--ink-2);
+    overflow-x: auto; margin-top: 12px; padding: 12px; background: var(--panel-2);
+    border: 2px solid var(--edge); font-family: var(--body); font-size: 17px; line-height: 1.4; color: var(--muted);
   }
-  .issues { margin: 12px 0 0; padding-left: 18px; color: var(--warn-ink); font-size: 13px; line-height: 1.7; }
+  .issues { margin: 12px 0 0; padding-left: 20px; color: var(--warn); font-size: 18px; line-height: 1.5; }
   a { color: var(--accent); }
-  ::selection { background: var(--accent-weak); }
+  ::selection { background: var(--accent); color: var(--panel); }
 
   /* ---- fun layer ---- */
-  .coach { margin: 14px 0 0; font-size: 14px; color: var(--ink-2); font-style: italic; }
-  .coach .emo { font-style: normal; }
-  .jfill { transition: width 1.2s cubic-bezier(.22, 1, .36, 1); }
-  .jcap, .jnow { transition: left 1.2s cubic-bezier(.22, 1, .36, 1); }
-  @keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(0.3) rotate(0deg); } 50% { opacity: 1; transform: scale(1) rotate(80deg); } }
-  .spark {
-    position: absolute; width: 9px; height: 9px; background: var(--accent); pointer-events: none;
-    clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
-    animation: twinkle 2.4s ease-in-out infinite;
-  }
-  .jfill { background: linear-gradient(90deg, var(--accent), #7FB069, var(--accent)); background-size: 200% 100%; }
-  @keyframes shimmer { to { background-position: -200% 0; } }
-  @media (prefers-reduced-motion: no-preference) { .jfill { animation: shimmer 3.2s linear infinite; } }
-  @keyframes pop { 0% { transform: scale(1); } 45% { transform: scale(1.13); } 100% { transform: scale(1); } }
-  .tcard .tval { display: inline-block; }
-  .tcard:hover .tval { animation: pop 0.4s ease; }
-  .confetti { position: fixed; top: -24px; font-size: 20px; pointer-events: none; z-index: 99; will-change: transform; }
-  @keyframes fall { to { transform: translateY(106vh) rotate(var(--r)); opacity: 0; } }
-  @media (prefers-reduced-motion: reduce) {
-    .spark { animation: none; opacity: 0.7; }
-    .jfill, .jcap, .jnow { transition: none; }
-    .frame { transition: none; }
-  }
+  @keyframes twinkle { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+  .spark { position: absolute; width: 10px; height: 10px; background: var(--accent-2); pointer-events: none;
+    clip-path: polygon(43% 0, 57% 0, 57% 43%, 100% 43%, 100% 57%, 57% 57%, 57% 100%, 43% 100%, 43% 57%, 0 57%, 0 43%, 43% 43%);
+    animation: twinkle 2.4s steps(2, end) infinite; }
+  .confetti { position: fixed; top: -24px; pointer-events: none; z-index: 99; }
+  @keyframes fall { to { transform: translateY(106vh); } }
+  @media (prefers-reduced-motion: reduce) { .spark { animation: none; opacity: 0.8; } }
 
-  /* motivation photo */
-  .motivation { display: flex; justify-content: center; margin: 40px 0 4px; }
+  /* ---- motivation ---- */
+  .motivation { display: flex; justify-content: center; margin: 34px 0 4px; }
   .motivation[hidden] { display: none; }
-  .frame {
-    position: relative; padding: 7px; border-radius: 22px;
-    background: linear-gradient(145deg, var(--accent), #7FB069 38%, #E8B369 72%, var(--accent));
-    box-shadow: 0 12px 30px rgba(36, 95, 58, 0.24);
-    transform: rotate(-1.8deg);
-    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  .frame:hover { transform: rotate(0deg) scale(1.02); }
-  .frame img {
-    display: block; width: 100%; max-width: 250px; height: auto;
-    border-radius: 16px; background: var(--surface);
-  }
-  /* sparks scattered round the edge, each on its own beat */
-  .frame .spark:nth-of-type(1) { top: -9px; left: 16%; }
-  .frame .spark:nth-of-type(2) { top: 14%; right: -11px; animation-delay: 0.7s; }
-  .frame .spark:nth-of-type(3) { bottom: -7px; left: 30%; animation-delay: 1.3s; }
-  .frame .spark:nth-of-type(4) { top: 44%; left: -12px; animation-delay: 1.9s; }
-  .frame .spark:nth-of-type(5) { bottom: 16%; right: -9px; animation-delay: 2.4s; }
-  .frame .spark:nth-of-type(6) { top: 4%; left: -7px; animation-delay: 3.05s; }
-  @media (prefers-color-scheme: dark) {
-    .frame { box-shadow: 0 12px 34px rgba(0, 0, 0, 0.5); }
-  }
-  :root[data-theme="dark"] .frame { box-shadow: 0 12px 34px rgba(0, 0, 0, 0.5); }
-  :root[data-theme="light"] .frame { box-shadow: 0 12px 30px rgba(36, 95, 58, 0.24); }
+  .frame { position: relative; padding: 6px; background: var(--accent); border: 4px solid var(--edge); }
+  .frame canvas { display: block; width: 240px; max-width: 100%; height: auto; border: 2px solid var(--edge); background: var(--panel); image-rendering: pixelated; }
+  .frame .spark:nth-of-type(1) { top: -8px; left: 18%; }
+  .frame .spark:nth-of-type(2) { top: 16%; right: -8px; animation-delay: 0.7s; }
+  .frame .spark:nth-of-type(3) { bottom: -8px; left: 32%; animation-delay: 1.3s; }
+  .frame .spark:nth-of-type(4) { top: 46%; left: -8px; animation-delay: 1.9s; }
+  .frame .spark:nth-of-type(5) { bottom: 18%; right: -8px; animation-delay: 2.4s; }
+  .frame .spark:nth-of-type(6) { top: 5%; left: -8px; animation-delay: 3.05s; }
 </style>
 </head>
 <body>
 
 <div class="wrap">
   <header>
-    <p class="eyebrow">Daily weigh-in</p>
-    <h1>81.25 <span class="arw">→</span> 73.1 kg<br>by 20 Nov 2026</h1>
-    <p class="sub">Pace <strong id="subpace">—</strong> · intake <strong id="subintake">—</strong> · protein <strong>~130 g</strong></p>
-    <p class="coach" id="coach"></p>
+    <p class="eyebrow">* DAILY WEIGH-IN *</p>
+    <h1>81.25 <span class="arw">-&gt;</span> 73.1 KG<br>BY 20 NOV 2026</h1>
+    <p class="sub">Pace <strong id="subpace">—</strong> · intake <strong id="subintake">—</strong> · protein <strong>130 g</strong></p>
+    <div class="nes-balloon from-left" style="margin-top:16px"><p class="coach" id="coach" style="margin:0"></p></div>
   </header>
 
-  <div class="journey" id="journey"></div>
+  <div class="nes-container is-rounded journey" id="journey"></div>
 
   <div class="today" id="today"></div>
 
-  <details class="explain">
+  <details class="nes-container is-rounded explain">
     <summary>How the daily target works</summary>
     <div class="explain-body"><div class="explain-inner">
       <p><b>Baseline <span id="exBase">—</span> kcal.</b> A normal day's energy for your current
@@ -392,23 +330,23 @@
 
   <div class="tiles" id="tiles"></div>
 
-  <div class="card">
-    <h2>The descent</h2>
-    <p class="note">Faint dots are daily weigh-ins — noise. The green line is your 7-day average — the real signal. Stay near the dashed target.</p>
+  <div class="nes-container is-rounded with-title card">
+    <p class="title">The descent</p>
+    <p class="note">Faint blocks are daily weigh-ins — noise. The solid line is your 7-day average — the real signal. Stay near the dotted target.</p>
     <div class="chartbox">
-      <svg id="chart" viewBox="0 0 940 430" role="img" aria-label="Weight trend versus target line"></svg>
+      <svg id="chart" viewBox="0 0 940 430" role="img" aria-label="Weight trend versus target line" shape-rendering="crispEdges"></svg>
       <div id="tip"></div>
     </div>
   </div>
 
-  <div class="card">
-    <h2>This week</h2>
+  <div class="nes-container is-rounded with-title card">
+    <p class="title">This week</p>
     <div class="review" id="review"></div>
     <div id="sleepstrip"></div>
   </div>
 
-  <div class="card">
-    <h2>Log</h2>
+  <div class="nes-container is-rounded with-title card">
+    <p class="title">Log</p>
     <div class="tablewrap">
     <table id="logtable">
       <thead><tr><th>Date</th><th class="num">Weight</th><th class="num">7-day avg</th><th class="num">Target</th><th class="num">kcal</th><th class="num">Protein</th><th class="num">Burned</th><th class="num">Net</th><th class="num">Sleep</th><th>Notes</th></tr></thead>
@@ -417,8 +355,8 @@
     </div>
   </div>
 
-  <div class="card">
-    <h2>Data check</h2>
+  <div class="nes-container is-rounded with-title card">
+    <p class="title">Data check</p>
     <p class="note">Validates every row so bad data can't hide. Expand the raw log to eyeball it.</p>
     <div id="datacheck"></div>
     <details><summary>Show raw log.csv</summary><pre id="rawcsv"></pre></details>
@@ -426,7 +364,7 @@
 
   <div class="motivation" id="motivation" hidden>
     <div class="frame">
-      <img id="motimg" alt="" loading="lazy" decoding="async">
+      <canvas id="motimg" aria-label="Motivation picture" role="img"></canvas>
       <span class="spark"></span><span class="spark"></span><span class="spark"></span>
       <span class="spark"></span><span class="spark"></span><span class="spark"></span>
     </div>
@@ -437,7 +375,7 @@
 
 <script type="module">
 // ===== Data comes straight from log.csv — the single source of truth. =====
-// To log: append one line to log.csv (date,weight_kg,calories,protein_g,steps,notes).
+// To log: append one line to log.csv (date,weight_kg,calories,protein_g,steps,active_kcal,sleep_h,notes).
 // The dashboard reads it live on every load. No DATA array to maintain.
 async function fetchCsv() {
   const res = await fetch("log.csv?t=" + Date.now(), { cache: "no-store" });
@@ -474,7 +412,7 @@ const fmtD = t => new Date(t).toLocaleDateString("en-GB", { day: "numeric", mont
 // Planned loss per week, derived from the two endpoints rather than restated, so the header
 // and the pace tile can never drift apart from each other or from the target line.
 const PLAN_RATE = (GOAL.w - START.w) / ((t1 - t0) / (7 * day));
-document.getElementById("subpace").textContent = `−${Math.abs(PLAN_RATE).toFixed(2)} kg/week`;
+document.getElementById("subpace").textContent = `-${Math.abs(PLAN_RATE).toFixed(2)} kg/week`;
 
 // Every logged day. A row can have food but no weight (e.g. away from the scale).
 const entries = DATA.map(e => ({ ...e, t: Date.parse(e.d) })).sort((a, b) => a.t - b.t);
@@ -491,7 +429,19 @@ const lastAny = entries[entries.length - 1]; // most recent logged day, weighed 
 document.querySelector("footer").textContent =
   `Updated ${fmtD(lastAny.t)} · ${entries.length} ${entries.length === 1 ? "entry" : "entries"} logged`;
 
-// ---- descent / journey bar ----
+// ---- 8x8 pixel icons, so the four panels are told apart by shape rather than by reading ----
+const PIX = {
+  fork: ["#.#..#..", "#.#..#..", "###..#..", ".#...#..", ".#...#..", ".#...#..", ".#...#..", ".#...#.."],
+  egg:  ["..###...", ".#####..", ".#####..", "#######.", "#######.", "#######.", ".#####..", "..###..."],
+  fire: ["...#....", "..##....", "..###...", ".#####..", ".#####..", "#######.", "#######.", ".#####.."],
+  moon: ["..###...", ".##.....", "##......", "##......", "##......", "##......", ".##.....", "..###..."],
+};
+const icon = k => `<svg class="pxicon" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true">` +
+  PIX[k].map((row, y) => [...row].map((c, x) =>
+    c === "#" ? `<rect x="${x}" y="${y}" width="1" height="1"/>` : "").join("")).join("") + `</svg>`;
+
+// ---- journey: an HP bar ----
+const CELLS = 20;
 const totalToLose = START.w - GOAL.w;
 const doneLost = START.w - last.avg;
 const pct = Math.max(0, Math.min(100, doneLost / totalToLose * 100));
@@ -501,39 +451,32 @@ const toGo = Math.max(0, last.avg - GOAL.w);
 const targetNow = targetAt(last.t);
 const avgVsTarget = last.avg - targetNow;
 const planPct = Math.max(0, Math.min(100, (START.w - targetNow) / totalToLose * 100));
-// Keep the floating value label off the card's edges at the extremes of the track.
-const labPct = Math.min(96, Math.max(4, pct));
+const onCells = Math.round(pct / 100 * CELLS);
+const planCell = Math.min(CELLS - 1, Math.floor(planPct / 100 * CELLS));
+// Keep the floating value label clear of the card's edges at the extremes of the track.
+const labPct = Math.min(94, Math.max(6, pct));
 const journeyEl = document.getElementById("journey");
 journeyEl.innerHTML = `
-  <div class="jtop"><span class="jlabel">Journey</span>
+  <div class="jtop"><span class="jlabel">JOURNEY</span>
     <span class="jstat"><b>${pct.toFixed(0)}%</b> there · ${toGo.toFixed(1)} kg to go (7-day avg)</span></div>
   <div class="jtrack" role="img" aria-label="${pct.toFixed(0)}% of the way from 81.25 kg to 73.1 kg. Seven-day average ${last.avg.toFixed(1)} kg; the plan for today is ${targetNow.toFixed(1)} kg.">
-    <div class="jfill" style="width:0%"></div>
-    <div class="jplan" style="left:${planPct}%"></div>
-    <div class="jcap" style="left:0%"></div>
-    <span class="jnow" style="left:0%">${last.avg.toFixed(1)}</span>
-    <span class="spark" style="left:${pct}%; top:12px; margin-left:-15px"></span>
-    <span class="spark" style="left:${pct}%; top:10px; margin-left:9px; animation-delay:1s"></span>
-    <span class="spark" style="left:${pct}%; top:-2px; margin-left:14px; animation-delay:1.7s"></span></div>
-  <div class="jends"><span><b>81.25</b> <em>start</em></span><span><em>goal</em> <b id="jgoal">73.1</b></span></div>
-  <p class="jnote">The dashed mark is where the plan puts you today (${targetNow.toFixed(1)} kg) —
+    ${Array.from({ length: CELLS }, (_, i) =>
+      `<div class="jcell${i < onCells ? " on" : ""}${i === planCell ? " plan" : ""}"></div>`).join("")}
+    <span class="jnow" style="left:${labPct}%">${last.avg.toFixed(1)}</span>
+  </div>
+  <div class="jends"><span><b>81.25</b> start</span><span>goal <b>73.1</b></span></div>
+  <p class="jnote">The hatched cell is where the plan puts you today (${targetNow.toFixed(1)} kg) —
     you're ${Math.abs(avgVsTarget).toFixed(1)} kg ${avgVsTarget <= 0 ? "ahead of" : "behind"} it.</p>`;
-// animate fill + marker in on load
-requestAnimationFrame(() => {
-  journeyEl.querySelector(".jfill").style.width = pct + "%";
-  journeyEl.querySelector(".jcap").style.left = pct + "%";
-  journeyEl.querySelector(".jnow").style.left = labPct + "%";
-});
 
 // ---- remaining today ----
 const PROT_TARGET = 130;
 const now = new Date();
 const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 const todayE = entries.find(e => e.d === todayStr) || null;
-// Energy model: the base target assumes a sedentary day (Mifflin-St Jeor ×1.2, −525 deficit).
+// Energy model: the base target assumes a sedentary day (Mifflin-St Jeor x1.2, -525 deficit).
 // Real movement is added back from Apple Health's active energy, discounted because
 // watches and apps overestimate burn — strength training worst of all.
-// With no activity synced for a day we fall back to the old flat ×1.5 target, so a missed
+// With no activity synced for a day we fall back to the old flat x1.5 target, so a missed
 // sync shows a sane number instead of an artificially strict sedentary one.
 const ACTIVITY_MULT = 1.2, ASSUMED_MULT = 1.5, DEFICIT = 525, ACTIVE_CREDIT = 0.75;
 const bmrFor = w => 10 * w + 6.25 * 169 - 5 * 28 - 161;
@@ -547,57 +490,46 @@ const targetFor = (w, active) => {
   return round10(Math.max(assumed, bmrFor(w) * ACTIVITY_MULT - DEFICIT + ACTIVE_CREDIT * active));
 };
 
-// Card icons, so the four are distinguishable at a glance rather than by reading labels.
-// Cutlery for what goes in, a flame for what gets burned off, a moon for sleep.
-const ICON = {
-  cutlery: '<path d="M4.2 1.8v5a1.6 1.6 0 0 0 3.2 0v-5M5.8 1.8v3.4M10 14.2V9a2.6 2.6 0 0 1 2.6-2.6V1.8"/><path d="M4.2 8.4v5.8"/>',
-  // A drumstick loses its bone at this size and reads as a magnifying glass; an egg
-  // stays legible at 15px and is distinct from the other three shapes.
-  egg: '<path d="M8 1.9c2.7 0 4.8 3.5 4.8 6.5A4.8 4.8 0 0 1 8 13.9 4.8 4.8 0 0 1 3.2 8.4c0-3 2.1-6.5 4.8-6.5z"/>',
-  flame: '<path d="M8 1.8c3 3 4.2 4.7 4.2 7A4.2 4.2 0 0 1 3.8 8.8c0-1.7 1-3.1 2.3-4.4.2 1.4.8 2.2 1.7 2.5C7.3 5.1 7.4 3.4 8 1.8z"/>',
-  moon: '<path d="M13.2 9.7A5.6 5.6 0 1 1 6.9 3.1a4.7 4.7 0 0 0 6.3 6.6z"/>',
-};
-const icon = k => `<svg class="ticon" viewBox="0 0 16 16" aria-hidden="true">${ICON[k]}</svg>`;
-
 const activeIn = todayE && todayE.active != null ? todayE.active : null;
 // Sleep is filed against the morning you wake up, so today's row holds last night.
 const SLEEP_MIN = 7;
 const sleepIn = todayE && todayE.sleep != null ? todayE.sleep : null;
 const _intakeTarget = targetFor(last.avg, activeIn);
+// No tilde: VT323 draws it at cap height, where it reads as a glitched letter rather than "about".
 document.getElementById("subintake").textContent =
-  `~${targetFor(last.avg, null)} kcal, rising with activity`;
+  `${targetFor(last.avg, null)} kcal base, rising with activity`;
 const calIn = todayE && todayE.cal != null ? todayE.cal : 0;
 const protIn = todayE && todayE.protein != null ? todayE.protein : 0;
 const calLeft = _intakeTarget - calIn;
 const protLeft = PROT_TARGET - protIn;
 const noToday = !todayE;
 document.getElementById("today").innerHTML = `
-  <div class="tcard ${calLeft < 0 ? "over" : ""}"><div class="tlabel">${icon("cutlery")}Calories left today</div>
+  <div class="nes-container is-rounded tcard ${calLeft < 0 ? "over" : ""}"><div class="tlabel">${icon("fork")}CALORIES<br>LEFT TODAY</div>
     <div class="tval">${calLeft < 0 ? "+" + Math.abs(Math.round(calLeft)) : Math.round(calLeft)}</div>
     <div class="tsub">${noToday ? "nothing logged today" : `${Math.round(calIn)} / ${_intakeTarget} kcal eaten${calLeft < 0 ? " · over" : ""}`}</div></div>
-  <div class="tcard ${protLeft <= 0 ? "good" : ""}"><div class="tlabel">${icon("egg")}Protein left today</div>
-    <div class="tval">${protLeft <= 0 ? "✓ done" : Math.round(protLeft) + " g"}</div>
+  <div class="nes-container is-rounded tcard ${protLeft <= 0 ? "good" : ""}"><div class="tlabel">${icon("egg")}PROTEIN<br>LEFT TODAY</div>
+    <div class="tval">${protLeft <= 0 ? "DONE" : Math.round(protLeft) + " g"}</div>
     <div class="tsub">${noToday ? "nothing logged today" : `${Math.round(protIn)} / ${PROT_TARGET} g${protLeft <= 0 ? " · target hit" : ""}`}</div></div>
-  <div class="tcard"><div class="tlabel">${icon("flame")}Burned today</div>
+  <div class="nes-container is-rounded tcard"><div class="tlabel">${icon("fire")}BURNED<br>TODAY</div>
     <div class="tval">${activeIn == null ? "—" : Math.round(activeIn)}</div>
     <div class="tsub">${activeIn == null
       ? "no activity synced yet"
       : `net ${Math.round(calIn - activeIn)} kcal · ${_intakeTarget > targetFor(last.avg, null)
-          ? `+${Math.round(ACTIVE_CREDIT * activeIn)} credited (×${ACTIVE_CREDIT})`
+          ? `+${Math.round(ACTIVE_CREDIT * activeIn)} credited (x${ACTIVE_CREDIT})`
           : "still within baseline"}`}</div></div>
-  <div class="tcard ${sleepIn == null ? "" : sleepIn >= SLEEP_MIN ? "good" : "over"}">
-    <div class="tlabel">${icon("moon")}Slept last night</div>
+  <div class="nes-container is-rounded tcard ${sleepIn == null ? "" : sleepIn >= SLEEP_MIN ? "good" : "over"}">
+    <div class="tlabel">${icon("moon")}SLEPT<br>LAST NIGHT</div>
     <div class="tval">${sleepIn == null ? "—" : sleepIn.toFixed(1) + " h"}</div>
     <div class="tsub">${sleepIn == null ? "not synced yet"
       : sleepIn >= SLEEP_MIN ? `${SLEEP_MIN}+ h · protects muscle` : `under ${SLEEP_MIN} h`}</div></div>`;
 
-// ---- target explainer (real numbers, so it matches the cards above) ----
+// ---- target explainer (real numbers, so it matches the panels above) ----
 const _assumed = targetFor(last.avg, null);
 document.getElementById("exBase").textContent = _assumed;
 document.getElementById("exBase2").textContent = _assumed;
 document.getElementById("exWorked").textContent = activeIn == null
-  ? `no activity synced yet → ${_assumed}`
-  : `burned ${Math.round(activeIn)} → +${Math.round(ACTIVE_CREDIT * activeIn)} credited → ${_intakeTarget}`;
+  ? `no activity synced yet -> ${_assumed}`
+  : `burned ${Math.round(activeIn)} -> +${Math.round(ACTIVE_CREDIT * activeIn)} credited -> ${_intakeTarget}`;
 
 // ---- weekly rate of loss ----
 // nearest entry within 2 days of a target time
@@ -614,24 +546,24 @@ const lost = START.w - last.w;
 // The thresholds are the same ones the status pill uses, so the two always agree.
 const FAST = -0.75, SLOW = -0.15;
 let paceCls, paceTxt;
-if (weeklyChange == null) { paceCls = "warn"; paceTxt = "▲ need 7 days"; }
-else if (weeklyChange <= FAST) { paceCls = "warn"; paceTxt = "▲ too fast"; }
-else if (weeklyChange >= SLOW) { paceCls = "warn"; paceTxt = "▲ too slow"; }
-else { paceCls = "good"; paceTxt = "✓ steady"; }
+if (weeklyChange == null) { paceCls = "warn"; paceTxt = "[?] NEED 7 DAYS"; }
+else if (weeklyChange <= FAST) { paceCls = "warn"; paceTxt = "[!] TOO FAST"; }
+else if (weeklyChange >= SLOW) { paceCls = "warn"; paceTxt = "[!] TOO SLOW"; }
+else { paceCls = "good"; paceTxt = "[OK] STEADY"; }
 document.getElementById("tiles").innerHTML = `
-  <div class="tile"><div class="label">Current</div>
+  <div class="nes-container is-rounded tile"><div class="label">CURRENT</div>
     <div class="value">${last.w.toFixed(1)}<span class="unit"> kg</span></div>
     <div class="delta">${fmtD(last.t)}</div></div>
-  <div class="tile"><div class="label">7-day avg</div>
+  <div class="nes-container is-rounded tile"><div class="label">7-DAY AVG</div>
     <div class="value">${last.avg.toFixed(1)}<span class="unit"> kg</span></div>
-    <div class="delta">target now ${targetAt(last.t).toFixed(1)} kg · ${Math.abs(avgVsTarget).toFixed(1)} kg ${avgVsTarget <= 0 ? "ahead" : "behind"}</div></div>
-  <div class="tile"><div class="label">Lost</div>
+    <div class="delta">target now ${targetNow.toFixed(1)} kg · ${Math.abs(avgVsTarget).toFixed(1)} kg ${avgVsTarget <= 0 ? "ahead" : "behind"}</div></div>
+  <div class="nes-container is-rounded tile"><div class="label">LOST</div>
     <div class="value">${lost.toFixed(1)}<span class="unit"> kg</span></div>
     <div class="delta">of ${(START.w - GOAL.w).toFixed(1)} kg goal</div></div>
-  <div class="tile"><div class="label">Pace</div>
+  <div class="nes-container is-rounded tile"><div class="label">PACE</div>
     <div class="pill ${paceCls}">${paceTxt}</div>
     <div class="delta">${weeklyChange == null ? "not enough weigh-ins yet"
-      : `${weeklyChange <= 0 ? "−" : "+"}${Math.abs(weeklyChange).toFixed(1)} kg/wk · plan −${Math.abs(PLAN_RATE).toFixed(2)}`}</div></div>`;
+      : `${weeklyChange <= 0 ? "-" : "+"}${Math.abs(weeklyChange).toFixed(1)} kg/wk · plan -${Math.abs(PLAN_RATE).toFixed(2)}`}</div></div>`;
 
 // ---- weekly review (client-side, always live) ----
 // Intake averages count every logged day, weighed or not — anchored on the latest log.
@@ -651,28 +583,28 @@ const sleepE = last7.filter(e => e.sleep != null && !isNaN(e.sleep));
 const avgSleep = sleepE.length ? sleepE.reduce((s, e) => s + +e.sleep, 0) / sleepE.length : null;
 
 let flag, flagCls;
-if (weighed.length < 4) { flag = "log more — need ≥4 days for a reliable trend"; flagCls = "warn"; }
-else if (avgVsTarget > 1) { flag = "behind — tighten intake ~150 kcal/day or add steps"; flagCls = "warn"; }
-else if (weeklyChange != null && weeklyChange < -0.75) { flag = "losing fast — eat a bit more to protect muscle"; flagCls = "warn"; }
-else { flag = "on track"; flagCls = "good"; }
+if (weighed.length < 4) { flag = "LOG MORE - NEED 4+ DAYS"; flagCls = "warn"; }
+else if (avgVsTarget > 1) { flag = "BEHIND - TIGHTEN ~150 KCAL"; flagCls = "warn"; }
+else if (weeklyChange != null && weeklyChange < -0.75) { flag = "LOSING FAST - EAT A BIT MORE"; flagCls = "warn"; }
+else { flag = "ON TRACK"; flagCls = "good"; }
 
-const wc = weeklyChange == null ? "—" : `${weeklyChange <= 0 ? "" : "+"}${weeklyChange.toFixed(1)} kg`;
+const wc = weeklyChange == null ? "—" : `${weeklyChange <= 0 ? "-" : "+"}${Math.abs(weeklyChange).toFixed(1)} kg`;
 const calStr = avgCal == null ? "—" : `${Math.round(avgCal)} kcal`;
 document.getElementById("review").innerHTML = `
-  <div class="rstat"><div class="rlabel">Weekly change</div><div class="rval">${wc}</div>
+  <div class="rstat"><div class="rlabel">WEEKLY<br>CHANGE</div><div class="rval">${wc}</div>
     <div class="rsub">${weeklyChange == null ? "need ~7 days of data" : "vs last week's avg"}</div></div>
-  <div class="rstat"><div class="rlabel">Vs target line</div><div class="rval">${avgVsTarget >= 0 ? "+" : ""}${avgVsTarget.toFixed(1)} kg</div>
+  <div class="rstat"><div class="rlabel">VS TARGET<br>LINE</div><div class="rval">${avgVsTarget >= 0 ? "+" : "-"}${Math.abs(avgVsTarget).toFixed(1)} kg</div>
     <div class="rsub">${avgVsTarget <= 0.3 ? "at or ahead of pace" : "behind pace"}</div></div>
-  <div class="rstat"><div class="rlabel">Avg intake (7d)</div><div class="rval">${calStr}</div>
+  <div class="rstat"><div class="rlabel">AVG INTAKE<br>(7D)</div><div class="rval">${calStr}</div>
     <div class="rsub">${avgCal == null ? "no calories logged" : `target ${intakeTarget} kcal`}</div></div>
-  <div class="rstat"><div class="rlabel">Avg protein (7d)</div><div class="rval">${avgProt == null ? "—" : Math.round(avgProt) + " g"}</div>
+  <div class="rstat"><div class="rlabel">AVG PROTEIN<br>(7D)</div><div class="rval">${avgProt == null ? "—" : Math.round(avgProt) + " g"}</div>
     <div class="rsub">${avgProt == null ? "not logged" : `target 130 g${avgProt < 110 ? " · low" : ""}`}</div></div>
-  <div class="rstat"><div class="rlabel">Avg net (7d)</div><div class="rval">${avgNet == null ? "—" : Math.round(avgNet) + " kcal"}</div>
-    <div class="rsub">${avgActive == null ? "no activity synced" : `intake − ${Math.round(avgActive)} kcal burned`}</div></div>
-  <div class="rstat"><div class="rlabel">Avg sleep (7d)</div><div class="rval">${avgSleep == null ? "—" : avgSleep.toFixed(1) + " h"}</div>
-    <div class="rsub">${avgSleep == null ? "no sleep synced" : `target ${SLEEP_MIN}–9 h${avgSleep < SLEEP_MIN ? " · short" : ""}`}</div></div>
-  <div class="rstat" style="grid-column: 1 / -1"><div class="rlabel">Status</div>
-    <div class="pill ${flagCls}">${flagCls === "good" ? "✓" : "▲"} ${flag}</div></div>`;
+  <div class="rstat"><div class="rlabel">AVG NET<br>(7D)</div><div class="rval">${avgNet == null ? "—" : Math.round(avgNet) + " kcal"}</div>
+    <div class="rsub">${avgActive == null ? "no activity synced" : `intake - ${Math.round(avgActive)} kcal burned`}</div></div>
+  <div class="rstat"><div class="rlabel">AVG SLEEP<br>(7D)</div><div class="rval">${avgSleep == null ? "—" : avgSleep.toFixed(1) + " h"}</div>
+    <div class="rsub">${avgSleep == null ? "no sleep synced" : `target ${SLEEP_MIN}-9 h${avgSleep < SLEEP_MIN ? " · short" : ""}`}</div></div>
+  <div class="rstat" style="grid-column: 1 / -1"><div class="rlabel">STATUS</div>
+    <div class="pill ${flagCls}">${flagCls === "good" ? "[OK] " : "[!] "}${flag}</div></div>`;
 
 // ---- sleep strip: the last seven nights ----
 // The average hides the shape: five good nights and two wrecked ones average out to
@@ -685,81 +617,97 @@ for (let i = 6; i >= 0; i--) {
 }
 const strip = document.getElementById("sleepstrip");
 if (nights.some(n => n.h != null)) {
-  const SW = 320, SH = 78, top = 16, floor = 60, MAXH = 10;
+  const SW = 320, SH = 84, top = 18, floor = 62, MAXH = 10;
   const bw = SW / nights.length;
-  const yFor = h => floor - (Math.min(h, MAXH) / MAXH) * (floor - top);
-  let s = `<line x1="0" y1="${yFor(SLEEP_MIN)}" x2="${SW}" y2="${yFor(SLEEP_MIN)}"
-      stroke="var(--target)" stroke-width="1" stroke-dasharray="4 4"/>
-    <text x="0" y="${yFor(SLEEP_MIN) - 4}" text-anchor="start" font-size="8"
-      fill="var(--ink-3)">${SLEEP_MIN}h</text>`;
+  // Quantise to a 2-unit grid so every bar edge lands on a "pixel" rather than a fraction.
+  const q = v => Math.round(v / 2) * 2;
+  const yFor = h => q(floor - (Math.min(h, MAXH) / MAXH) * (floor - top));
+  let s = "";
+  for (let dx = 0; dx < SW; dx += 8) {
+    s += `<rect x="${dx}" y="${yFor(SLEEP_MIN)}" width="4" height="2" fill="var(--muted)"/>`;
+  }
+  s += `<text x="0" y="${yFor(SLEEP_MIN) - 5}" text-anchor="start" font-size="11"
+    font-family="VT323, monospace" fill="var(--muted)">${SLEEP_MIN}h</text>`;
   nights.forEach((n, i) => {
-    const cx = i * bw + bw / 2, w = Math.min(bw - 9, 22);
+    const cx = q(i * bw + bw / 2), w = q(Math.min(bw - 10, 22));
     const label = new Date(n.t).toLocaleDateString("en-GB", { weekday: "narrow" });
     if (n.h != null) {
       const y = yFor(n.h);
       const short = n.h < SLEEP_MIN;
-      s += `<rect x="${cx - w / 2}" y="${y}" width="${w}" height="${floor - y}" rx="3"
-          fill="${short ? "var(--warn-ink)" : "var(--accent)"}" opacity="${short ? 0.85 : 1}"/>
-        <text x="${cx}" y="${y - 4}" text-anchor="middle" font-size="9"
-          font-family="IBM Plex Mono, monospace" fill="var(--ink-2)">${n.h.toFixed(1)}</text>`;
+      s += `<rect x="${q(cx - w / 2)}" y="${y}" width="${w}" height="${floor - y}"
+          fill="${short ? "var(--warn)" : "var(--accent)"}"/>
+        <text x="${cx}" y="${y - 5}" text-anchor="middle" font-size="12"
+          font-family="VT323, monospace" fill="var(--ink)">${n.h.toFixed(1)}</text>`;
     } else {
-      s += `<rect x="${cx - w / 2}" y="${floor - 3}" width="${w}" height="3" rx="1.5"
-        fill="var(--line)"/>`;
+      s += `<rect x="${q(cx - w / 2)}" y="${floor - 4}" width="${w}" height="4" fill="var(--track)"/>`;
     }
-    s += `<text x="${cx}" y="${SH - 4}" text-anchor="middle" font-size="9"
-      fill="var(--ink-3)">${label}</text>`;
+    s += `<text x="${cx}" y="${SH - 4}" text-anchor="middle" font-size="12"
+      font-family="VT323, monospace" fill="var(--muted)">${label}</text>`;
   });
-  strip.innerHTML = `<h3>Sleep stats</h3>
+  strip.innerHTML = `<h3>SLEEP STATS</h3>
     <p class="note">Hours slept each of the last 7 nights. Amber is under ${SLEEP_MIN} h.</p>
-    <svg viewBox="0 0 ${SW} ${SH}" role="img"
+    <svg viewBox="0 0 ${SW} ${SH}" role="img" shape-rendering="crispEdges"
       aria-label="Hours slept each of the last seven nights against a 7 hour target">${s}</svg>`;
 }
 
 // ---- chart ----
 const svg = document.getElementById("chart");
-const W = 940, H = 430, M = { l: 46, r: 18, t: 16, b: 34 };
+const W = 940, H = 430, M = { l: 52, r: 20, t: 18, b: 38 };
 const yMin = 72, yMax = 82.5;
-const x = t => M.l + (W - M.l - M.r) * (t - t0) / (t1 - t0);
-const y = w => M.t + (H - M.t - M.b) * (1 - (w - yMin) / (yMax - yMin));
+// Snap every coordinate to a 4-unit grid: combined with crispEdges and the stepped line
+// below, the plot reads as something drawn on a low-resolution tile grid rather than a
+// smooth vector chart that happens to sit on a pixel page.
+const snap = v => Math.round(v / 4) * 4;
+const x = t => snap(M.l + (W - M.l - M.r) * (t - t0) / (t1 - t0));
+const y = w => snap(M.t + (H - M.t - M.b) * (1 - (w - yMin) / (yMax - yMin)));
 let s = "";
 
-// gradient for the area fill under the average line
-s += `<defs><linearGradient id="agrad" x1="0" y1="0" x2="0" y2="1">
-  <stop offset="0" stop-color="var(--accent)" stop-opacity="0.20"/>
-  <stop offset="1" stop-color="var(--accent)" stop-opacity="0"/>
-</linearGradient></defs>`;
+// dither fill under the average line — a 2x2 checkerboard, the classic way to fake a
+// half-tone on hardware with no alpha
+s += `<defs><pattern id="dither" width="8" height="8" patternUnits="userSpaceOnUse">
+  <rect x="0" y="0" width="4" height="4" fill="var(--accent)" opacity="0.16"/>
+  <rect x="4" y="4" width="4" height="4" fill="var(--accent)" opacity="0.16"/>
+</pattern></defs>`;
 
 // gridlines + y labels (every 2 kg)
 for (let g = 72; g <= 82; g += 2) {
-  s += `<line x1="${M.l}" y1="${y(g)}" x2="${W - M.r}" y2="${y(g)}" stroke="var(--line)" stroke-width="1"/>`;
-  s += `<text x="${M.l - 8}" y="${y(g) + 4}" text-anchor="end" font-size="12" fill="var(--ink-3)" font-family="IBM Plex Mono, monospace">${g}</text>`;
+  s += `<rect x="${M.l}" y="${y(g)}" width="${W - M.l - M.r}" height="2" fill="var(--track)"/>`;
+  s += `<text x="${M.l - 10}" y="${y(g) + 5}" text-anchor="end" font-size="16" fill="var(--muted)" font-family="VT323, monospace">${g}</text>`;
 }
 // x labels (month starts)
 ["2026-07-20", "2026-08-01", "2026-09-01", "2026-10-01", "2026-11-01", "2026-11-20"].forEach(d => {
   const t = Date.parse(d);
-  s += `<text x="${x(t)}" y="${H - 10}" text-anchor="middle" font-size="12" fill="var(--ink-3)">${fmtD(t)}</text>`;
+  s += `<text x="${x(t)}" y="${H - 12}" text-anchor="middle" font-size="16" fill="var(--muted)" font-family="VT323, monospace">${fmtD(t)}</text>`;
 });
-// target line + goal marker
-s += `<line x1="${x(t0)}" y1="${y(START.w)}" x2="${x(t1)}" y2="${y(GOAL.w)}" stroke="var(--target)" stroke-width="2" stroke-dasharray="5 5"/>`;
-s += `<text x="${x(t1) - 6}" y="${y(GOAL.w) - 10}" text-anchor="end" font-size="12" fill="var(--ink-2)">target 73.1</text>`;
-s += `<circle cx="${x(t1)}" cy="${y(GOAL.w)}" r="4" fill="none" stroke="var(--target)" stroke-width="2"/>`;
-
-// area fill + 7-day avg line — the signal
-if (weighed.length > 1) {
-  const linePts = weighed.map(e => `${x(e.t)},${y(e.avg)}`);
-  s += `<path d="M ${x(weighed[0].t)},${y(yMin)} L ${linePts.join(" L ")} L ${x(last.t)},${y(yMin)} Z" fill="url(#agrad)"/>`;
-  s += `<polyline points="${linePts.join(" ")}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+// target line, drawn as discrete blocks rather than a dashed stroke
+const steps = Math.floor((x(t1) - x(t0)) / 12);
+for (let i = 0; i <= steps; i++) {
+  const tt = t0 + (t1 - t0) * (i / steps);
+  s += `<rect x="${x(tt)}" y="${y(targetAt(tt))}" width="6" height="3" fill="var(--muted)"/>`;
 }
-// daily dots (faint) — the noise
+s += `<text x="${x(t1) - 8}" y="${y(GOAL.w) - 24}" text-anchor="end" font-size="16" fill="var(--muted)" font-family="VT323, monospace">target 73.1</text>`;
+s += `<rect x="${x(t1) - 5}" y="${y(GOAL.w) - 5}" width="10" height="10" fill="none" stroke="var(--muted)" stroke-width="3"/>`;
+
+// area + 7-day avg line — the signal, as a staircase
+if (weighed.length > 1) {
+  const pts = [];
+  weighed.forEach((e, i) => {
+    if (i > 0) pts.push([x(e.t), y(weighed[i - 1].avg)]);   // horizontal run, then the step
+    pts.push([x(e.t), y(e.avg)]);
+  });
+  const d = pts.map(p => p.join(",")).join(" L ");
+  s += `<path d="M ${x(weighed[0].t)},${y(yMin)} L ${d} L ${x(last.t)},${y(yMin)} Z" fill="url(#dither)"/>`;
+  s += `<polyline points="${pts.map(p => p.join(",")).join(" ")}" fill="none" stroke="var(--accent)" stroke-width="4"/>`;
+}
+// daily weigh-ins as faint blocks — the noise
 weighed.forEach(e => {
-  s += `<circle cx="${x(e.t)}" cy="${y(e.w)}" r="3.2" fill="var(--accent)" opacity="0.30"/>`;
+  s += `<rect x="${e.t === last.t ? x(e.t) - 3 : x(e.t) - 3}" y="${y(e.w) - 3}" width="6" height="6" fill="var(--accent)" opacity="0.45"/>`;
 });
-// emphasized endpoint + direct label (gentle pulse unless reduced motion)
-const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-s += `<circle cx="${x(last.t)}" cy="${y(last.avg)}" r="5" fill="var(--accent)" stroke="var(--card)" stroke-width="2.5">${reduceMotion ? "" : '<animate attributeName="r" values="5;7;5" dur="2.4s" repeatCount="indefinite"/>'}</circle>`;
-s += `<text x="${x(last.t) + 10}" y="${y(last.avg) + 4}" font-size="13" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">${last.avg.toFixed(1)}</text>`;
+// emphasized endpoint + direct label
+s += `<rect x="${x(last.t) - 7}" y="${y(last.avg) - 7}" width="14" height="14" fill="var(--accent)" stroke="var(--panel)" stroke-width="3"/>`;
+s += `<text x="${x(last.t) + 14}" y="${y(last.avg) + 6}" font-size="19" fill="var(--ink)" font-family="VT323, monospace">${last.avg.toFixed(1)}</text>`;
 // crosshair (hidden until hover)
-s += `<line id="xhair" x1="0" y1="${M.t}" x2="0" y2="${H - M.b}" stroke="var(--ink-3)" stroke-width="1" opacity="0" pointer-events="none"/>`;
+s += `<rect id="xhair" x="0" y="${M.t}" width="2" height="${H - M.t - M.b}" fill="var(--muted)" opacity="0" pointer-events="none"/>`;
 s += `<rect x="${M.l}" y="${M.t}" width="${W - M.l - M.r}" height="${H - M.t - M.b}" fill="transparent" id="hover"/>`;
 svg.innerHTML = s;
 
@@ -772,8 +720,8 @@ document.getElementById("hover").addEventListener("mousemove", ev => {
   const near = weighed.reduce((a, b) => Math.abs(b.t - t) < Math.abs(a.t - t) ? b : a);
   const useEntry = Math.abs(near.t - t) < 3 * day;
   const tt = useEntry ? near.t : t;
-  xhair.setAttribute("x1", x(tt)); xhair.setAttribute("x2", x(tt));
-  xhair.setAttribute("opacity", "0.4");
+  xhair.setAttribute("x", x(tt) - 1);
+  xhair.setAttribute("opacity", "0.5");
   // Fill it before measuring, since the width depends on the text.
   tip.innerHTML = useEntry
     ? `<span class="d">${fmtD(near.t)}</span><br>weight ${near.w.toFixed(1)} · avg ${near.avg.toFixed(1)}<br><span class="d">target ${targetAt(near.t).toFixed(1)} kg</span>`
@@ -792,7 +740,7 @@ document.getElementById("hover").addEventListener("mouseleave", () => {
 
 // ---- table (newest first) ----
 // Every cell carries its column name and a class, so the same markup can be read as a table
-// on a wide screen and as one card per day on a phone (see the max-width: 719px block).
+// on a wide screen and as one panel per day on a phone (see the max-width: 759px block).
 const cell = (cls, label, val) =>
   `<td class="num c-${cls}${val === "—" ? " empty" : ""}" data-label="${label}">${val}</td>`;
 document.querySelector("#logtable tbody").innerHTML = [...entries].reverse().map(e => `
@@ -812,8 +760,8 @@ document.querySelectorAll("#logtable .notewrap").forEach(wrap => {
   const c = wrap.querySelector(".notecell");
   if (c.scrollHeight > c.clientHeight + 1) wrap.classList.add("truncated");
 });
-// Anywhere in a clipped note toggles it, not just the button — the button alone is an
-// 11px target, which on a phone is a miss and an accidental scroll.
+// Anywhere in a clipped note toggles it, not just the button — the button alone is a tiny
+// target, which on a phone is a miss and an accidental scroll.
 document.querySelector("#logtable tbody").addEventListener("click", ev => {
   const wrap = ev.target.closest(".notewrap.truncated");
   if (!wrap) return;
@@ -848,9 +796,9 @@ function checkRows(lines) {
 }
 const issues = checkRows(dataLines);
 document.getElementById("datacheck").innerHTML = issues.length
-  ? `<div class="pill warn">▲ ${issues.length} issue${issues.length > 1 ? "s" : ""} found</div>
+  ? `<div class="pill warn">[!] ${issues.length} ISSUE${issues.length > 1 ? "S" : ""} FOUND</div>
      <ul class="issues">${issues.map(i => `<li>${i}</li>`).join("")}</ul>`
-  : `<div class="pill good">✓ ${dataLines.length} row${dataLines.length > 1 ? "s" : ""}, no issues</div>`;
+  : `<div class="pill good">[OK] ${dataLines.length} ROW${dataLines.length > 1 ? "S" : ""}, NO ISSUES</div>`;
 document.getElementById("rawcsv").textContent = CSV_TEXT.replace(/\s+$/, "");
 
 // ---- fun layer: cheeky coach line + confetti ----
@@ -871,22 +819,20 @@ const quips = [
 ];
 document.getElementById("coach").textContent = quips[Math.floor(Math.random() * quips.length)];
 
-// geometric confetti (no emoji)
+// square confetti, stepped so it tumbles frame by frame like a sprite
 function confetti() {
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const cols = ["var(--accent)", "#245F3A", "#7FB069", "#E8B369", "#C24E4E"];
   for (let i = 0; i < 32; i++) {
     const el = document.createElement("div");
     el.className = "confetti";
-    const w = 6 + Math.random() * 5;
+    const w = 6 + Math.floor(Math.random() * 3) * 3;
     el.style.width = w + "px";
-    el.style.height = w * 1.6 + "px";
+    el.style.height = w + "px";
     el.style.background = cols[i % cols.length];
-    el.style.borderRadius = "1px";
     el.style.left = Math.random() * 100 + "vw";
     const dur = 2.6 + Math.random() * 1.8;
-    el.style.setProperty("--r", (Math.random() * 720 - 360) + "deg");
-    el.style.animation = `fall ${dur}s linear forwards`;
+    el.style.animation = `fall ${dur}s steps(${Math.round(dur * 14)}, end) forwards`;
     el.style.animationDelay = Math.random() * 0.5 + "s";
     document.body.appendChild(el);
     setTimeout(() => el.remove(), (dur + 0.7) * 1000);
@@ -929,20 +875,19 @@ explain.querySelector("summary").addEventListener("click", ev => {
   if (opening) explain.open = true;      // render the content so it can be measured
   const to = opening ? explainBody.scrollHeight : 0;
   explainAnim = explainBody.animate(
-    { height: [from + "px", to + "px"], opacity: opening ? [0, 1] : [1, 0] },
-    { duration: 340, easing: "cubic-bezier(0.22, 1, 0.36, 1)" }
+    { height: [from + "px", to + "px"] },
+    { duration: 300, easing: "steps(10, end)" }
   );
   explainAnim.onfinish = () => {
     explainAnim = null;
     if (!opening) explain.open = false;  // only hide once it has finished collapsing
   };
 });
-// celebrate if today's protein target is already hit; also poke the marker for a burst
+// celebrate if today's protein target is already hit
 if (!noToday && protLeft <= 0) setTimeout(confetti, 500);
-// Confetti stays as an unadvertised treat, but on the goal number rather than the bar: the
-// track is full-width, so hanging it there turned a 15px dot into a strip across the card
-// that fired on any stray tap. No cursor or tooltip — nothing here suggests a drag.
-const jg = document.getElementById("jgoal");
+// Confetti stays as an unadvertised treat on the goal number, which is a small deliberate
+// target — hanging it on the full-width bar fired it on any stray tap.
+const jg = document.querySelector(".jends b:last-of-type");
 if (jg) jg.addEventListener("click", confetti);
 
 // ---- motivation photo: a different one at random on every load ----
@@ -953,11 +898,23 @@ try {
   const pics = await res.json();
   if (Array.isArray(pics) && pics.length) {
     const pick = pics[Math.floor(Math.random() * pics.length)];
-    const img = document.getElementById("motimg");
-    if (pick.w) img.width = pick.w;   // stated up front so the page never jumps
-    if (pick.h) img.height = pick.h;
-    img.src = pick.src;
-    document.getElementById("motivation").hidden = false;
+    // Drawn small and displayed large, so the photo is genuinely down-sampled into pixels
+    // rather than a smooth image sitting on a pixel page. 120px across keeps a face readable;
+    // raise SRC_W for a softer look, or swap the canvas back to an <img> to turn it off.
+    const SRC_W = 120;
+    const cv = document.getElementById("motimg");
+    const src = new Image();
+    src.decoding = "async";
+    src.onload = () => {
+      cv.width = SRC_W;
+      cv.height = Math.max(1, Math.round(SRC_W * src.naturalHeight / src.naturalWidth));
+      const ctx = cv.getContext("2d");
+      ctx.imageSmoothingEnabled = true;      // average on the way down, blocky on the way up
+      ctx.drawImage(src, 0, 0, cv.width, cv.height);
+      document.getElementById("motivation").hidden = false;
+    };
+    src.onerror = () => console.warn("motivation image failed:", pick.src);
+    src.src = pick.src;
   }
 } catch (e) {
   console.warn("no motivation pictures:", e);
