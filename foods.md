@@ -16,6 +16,7 @@ Add new items as they come up.
 | White wine | 1 glass (150 ml) | 120 | 0 |
 | Gin & tonic (regular tonic) | 1 drink | 170 | 0 |
 | Skinny bitch (vodka, soda, lime) | 1 drink | 80 | 0 |
+| Vodka Red Bull (40 ml vodka + 250 ml Red Bull) | 1 drink | 205 | 0 |
 | Chicken breast, cooked | 150 g | 250 | 45 |
 | Iced flat white, oat milk | 1 cup (~350 ml) | 100 | 2 |
 | Vilgain Clear Plant Protein | 1 serving (~30 g) | 110 | 24 |
