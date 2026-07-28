@@ -91,13 +91,30 @@
   .jtop .jlabel { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
   .jtop .jstat { font-size: 13px; color: var(--ink-2); }
   .jtop .jstat b { color: var(--accent); font-weight: 600; }
-  .jtrack { position: relative; height: 8px; border-radius: 999px; background: var(--accent-weak); overflow: visible; }
+  /* The marker is a readout, never a control. A ringed circle centred on a track is the
+     universal look of a draggable slider thumb, so it's a flush tick with the value printed
+     above it instead. */
+  .jtrack { position: relative; height: 8px; margin-top: 27px; border-radius: 999px; background: var(--accent-weak); overflow: visible; }
   .jfill { position: absolute; left: 0; top: 0; height: 100%; border-radius: 999px; background: var(--accent); }
-  .jmark {
-    position: absolute; top: 50%; width: 15px; height: 15px; border-radius: 50%;
-    background: var(--accent); border: 3px solid var(--card); transform: translate(-50%, -50%);
-    box-shadow: 0 0 0 1px var(--accent);
+  .jcap {
+    position: absolute; top: 50%; width: 4px; height: 16px; border-radius: 2px;
+    background: var(--accent); transform: translate(-50%, -50%);
   }
+  .jnow {
+    position: absolute; bottom: 15px; transform: translateX(-50%); white-space: nowrap;
+    font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums;
+    font-size: 12px; font-weight: 600; color: var(--accent);
+  }
+  /* Where the plan says today should be — dashed, echoing the target line on the chart, so
+     "ahead of pace" is something you can see rather than two numbers to compare. */
+  /* Tall enough to clear the 8px track top and bottom, and drawn in ink rather than the
+     chart's --target grey: when you're ahead of plan this mark falls *inside* the green
+     fill, where a soft grey disappears. The dashes keep the visual rhyme with the chart. */
+  .jplan {
+    position: absolute; top: 50%; width: 2px; height: 22px; transform: translate(-50%, -50%);
+    background: repeating-linear-gradient(var(--ink-2) 0 3px, transparent 3px 5.5px);
+  }
+  .jnote { margin: 11px 0 0; font-size: 12px; color: var(--ink-3); line-height: 1.5; }
   .jends { display: flex; justify-content: space-between; margin-top: 12px; font-size: 12.5px; color: var(--ink-2); }
   .jends b { font-family: "IBM Plex Mono", monospace; color: var(--ink); font-weight: 600; }
   .jends em { font-style: normal; color: var(--ink-3); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; }
@@ -295,8 +312,7 @@
   .coach { margin: 14px 0 0; font-size: 14px; color: var(--ink-2); font-style: italic; }
   .coach .emo { font-style: normal; }
   .jfill { transition: width 1.2s cubic-bezier(.22, 1, .36, 1); }
-  .jmark { transition: left 1.2s cubic-bezier(.22, 1, .36, 1); cursor: pointer; }
-  @keyframes bob { 0%, 100% { transform: translate(-50%, -50%); } 50% { transform: translate(-50%, -64%); } }
+  .jcap, .jnow { transition: left 1.2s cubic-bezier(.22, 1, .36, 1); }
   @keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(0.3) rotate(0deg); } 50% { opacity: 1; transform: scale(1) rotate(80deg); } }
   .spark {
     position: absolute; width: 9px; height: 9px; background: var(--accent); pointer-events: none;
@@ -311,12 +327,9 @@
   .tcard:hover .tval { animation: pop 0.4s ease; }
   .confetti { position: fixed; top: -24px; font-size: 20px; pointer-events: none; z-index: 99; will-change: transform; }
   @keyframes fall { to { transform: translateY(106vh) rotate(var(--r)); opacity: 0; } }
-  @media (prefers-reduced-motion: no-preference) {
-    .jmark { animation: bob 2.8s ease-in-out infinite; }
-  }
   @media (prefers-reduced-motion: reduce) {
     .spark { animation: none; opacity: 0.7; }
-    .jfill, .jmark { transition: none; }
+    .jfill, .jcap, .jnow { transition: none; }
     .frame { transition: none; }
   }
 
@@ -483,19 +496,33 @@ const totalToLose = START.w - GOAL.w;
 const doneLost = START.w - last.avg;
 const pct = Math.max(0, Math.min(100, doneLost / totalToLose * 100));
 const toGo = Math.max(0, last.avg - GOAL.w);
+// Both the progress fill and the "kg to go" figure run off the 7-day average, not the last
+// reading — say so, or it silently contradicts the Current tile a few hundred pixels below.
+const targetNow = targetAt(last.t);
+const avgVsTarget = last.avg - targetNow;
+const planPct = Math.max(0, Math.min(100, (START.w - targetNow) / totalToLose * 100));
+// Keep the floating value label off the card's edges at the extremes of the track.
+const labPct = Math.min(96, Math.max(4, pct));
 const journeyEl = document.getElementById("journey");
 journeyEl.innerHTML = `
   <div class="jtop"><span class="jlabel">Journey</span>
-    <span class="jstat"><b>${pct.toFixed(0)}%</b> there · ${toGo.toFixed(1)} kg to go</span></div>
-  <div class="jtrack"><div class="jfill" style="width:0%"></div><div class="jmark" style="left:0%" title="poke me"></div>
-    <span class="spark" style="left:${pct}%; top:-11px; margin-left:-4px"></span>
-    <span class="spark" style="left:${pct}%; top:11px; margin-left:-13px; animation-delay:1s"></span>
-    <span class="spark" style="left:${pct}%; top:-3px; margin-left:10px; animation-delay:1.7s"></span></div>
-  <div class="jends"><span><b>81.25</b> <em>start</em></span><span><em>goal</em> <b>73.1</b></span></div>`;
+    <span class="jstat"><b>${pct.toFixed(0)}%</b> there · ${toGo.toFixed(1)} kg to go (7-day avg)</span></div>
+  <div class="jtrack" role="img" aria-label="${pct.toFixed(0)}% of the way from 81.25 kg to 73.1 kg. Seven-day average ${last.avg.toFixed(1)} kg; the plan for today is ${targetNow.toFixed(1)} kg.">
+    <div class="jfill" style="width:0%"></div>
+    <div class="jplan" style="left:${planPct}%"></div>
+    <div class="jcap" style="left:0%"></div>
+    <span class="jnow" style="left:0%">${last.avg.toFixed(1)}</span>
+    <span class="spark" style="left:${pct}%; top:12px; margin-left:-15px"></span>
+    <span class="spark" style="left:${pct}%; top:10px; margin-left:9px; animation-delay:1s"></span>
+    <span class="spark" style="left:${pct}%; top:-2px; margin-left:14px; animation-delay:1.7s"></span></div>
+  <div class="jends"><span><b>81.25</b> <em>start</em></span><span><em>goal</em> <b>73.1</b></span></div>
+  <p class="jnote">The dashed mark is where the plan puts you today (${targetNow.toFixed(1)} kg) —
+    you're ${Math.abs(avgVsTarget).toFixed(1)} kg ${avgVsTarget <= 0 ? "ahead of" : "behind"} it.</p>`;
 // animate fill + marker in on load
 requestAnimationFrame(() => {
   journeyEl.querySelector(".jfill").style.width = pct + "%";
-  journeyEl.querySelector(".jmark").style.left = pct + "%";
+  journeyEl.querySelector(".jcap").style.left = pct + "%";
+  journeyEl.querySelector(".jnow").style.left = labPct + "%";
 });
 
 // ---- remaining today ----
@@ -581,7 +608,6 @@ const weeklyChange = weekAgo ? last.avg - weekAgo.avg : null;
 
 // ---- tiles ----
 const lost = START.w - last.w;
-const avgVsTarget = last.avg - targetAt(last.t);
 // Pace answers "is the current rate healthy", not "am I ahead of the line" — that second
 // question belongs to the 7-day-avg tile, which already carries the target line. Splitting
 // them stops the tile reading "on track" while the status below says "losing too fast".
@@ -913,8 +939,10 @@ explain.querySelector("summary").addEventListener("click", ev => {
 });
 // celebrate if today's protein target is already hit; also poke the marker for a burst
 if (!noToday && protLeft <= 0) setTimeout(confetti, 500);
-const jm = document.querySelector(".jmark");
-if (jm) jm.addEventListener("click", confetti);
+// Confetti stays as an unadvertised treat on the bar — no cursor, no tooltip, nothing that
+// suggests the marker can be dragged.
+const jt = document.querySelector(".jtrack");
+if (jt) jt.addEventListener("click", confetti);
 
 // ---- motivation photo: a different one at random on every load ----
 // Add pictures by dropping them in motivation/ and listing them in motivation.json.
