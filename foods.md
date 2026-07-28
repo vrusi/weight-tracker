@@ -47,7 +47,7 @@ Add new items as they come up.
 | Tomato | 1 medium (~120 g) | 22 | 1 |
 | Carrot | 1 medium (~60 g) | 25 | 1 |
 | dm Sportness L-Carnitine liquid | 25 ml | 1 | 0 |
-| Tuna fillet on leaf salad, sesame, citrus vinaigrette, toast | 1 serving | 480 | 42 |
+| Tuna fillet (~150 g) on leaf salad, sesame, citrus vinaigrette, 2 toast | 1 serving | 470 | 44 |
 
 ## Notes
 - Creatine: 0 kcal. Effective dose is 3–5 g/day; more is excreted, causes GI upset, and adds intracellular water (inflates scale weight).
