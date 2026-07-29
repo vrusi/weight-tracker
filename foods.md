@@ -50,6 +50,9 @@ Add new items as they come up.
 | Carrot | 1 medium (~60 g) | 25 | 1 |
 | dm Sportness L-Carnitine liquid | 25 ml | 1 | 0 |
 | Tuna fillet (~150 g) on leaf salad, sesame, citrus vinaigrette, 2 toast | 1 serving | 470 | 44 |
+| Billa Proteinový sendvič (chicken steak, iceberg, tomato, cucumber, caper dressing) | 1 pack (~200 g) | 380 | 22 |
+| Le&Co Šunka vařená ve vlastní šťávě (98% meat, cooked ham) | 100 g | 110 | 19 |
+| Alpro Plant Protein yogurt alt., raspberry-strawberry (dairy-free) | 150 g pot | 90 | 10 |
 
 ## Notes
 - Creatine: 0 kcal. Effective dose is 3–5 g/day; more is excreted, causes GI upset, and adds intracellular water (inflates scale weight).
