@@ -39,12 +39,10 @@ Apple Health ──shortcut──► repository_dispatch ──► GitHub Action
 - **`log.csv`** is the single source of truth. Columns:
   `date,weight_kg,calories,protein_g,steps,active_kcal,sleep_h,notes`
 - **`index.html`** fetches it live on every page load. Never hardcode data into it.
-- **The design is pixel-art**, built on [NES.css](https://nostalgic-css.github.io/NES.css/) vendored into
-  `vendor/` (framework + Press Start 2P + VT323, no CDN). `classic.html` is the previous sage/pine
-  design, kept working and reachable at `/classic.html`; git tag `design-classic` is the same thing.
-  Two gotchas if you touch it: `.nes-table` hardcodes `background-color:#fff` and `table-layout:fixed`
-  (so the log table is hand-styled instead), and the balloon's tail colours are baked into box-shadows
-  and have to be re-declared per theme. Press Start 2P has no `✓`/`▲`/`→` glyphs — use `[OK]`, `[!]`, `->`.
+- A pixel-art redesign (NES.css, vendored, no CDN) shipped and was reverted the same day — she
+  didn't like the look. `index.html` is the original sage/pine design again. If pixel art comes
+  up again, the git tag `design-classic` and commit `866035e` have the full NES.css build to
+  restart from rather than redoing the framework plumbing.
 - **GitHub Pages serves `main`.** Anything not on `main` is invisible to her.
 - **`scripts/log_weight.py`** upserts by date and **only writes the columns it is given**, so an
   automated weight sync never clobbers hand-logged food. An `active` of `0` means an empty Health
