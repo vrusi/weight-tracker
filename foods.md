@@ -55,6 +55,7 @@ Add new items as they come up.
 | Alpro Plant Protein yogurt alt., raspberry-strawberry (dairy-free) | 150 g pot | 90 | 10 |
 | Whole ham baguette w/ Lučina cream cheese spread (contains dairy) | 1 whole baguette | 810 | 36 |
 | DrWitt Collagen water, strawberry | 750 ml bottle | 15 | 0* |
+| Wojnar's Schinken Käse sandwich (ham, cheese, pickle, white bread; contains dairy) | 1 pack | 380 | 15 |
 
 ## Notes
 - Creatine: 0 kcal. Effective dose is 3–5 g/day; more is excreted, causes GI upset, and adds intracellular water (inflates scale weight).
