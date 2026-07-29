@@ -221,7 +221,14 @@
     margin: 0 0 3px; letter-spacing: -0.01em; color: var(--ink);
   }
   #sleepstrip .note { margin: 0 0 12px; }
-  #sleepstrip svg { width: 100%; height: auto; display: block; }
+  #sleepstrip svg { width: 100%; height: auto; display: block; border-radius: 10px; }
+  /* The sky stays a fixed navy regardless of page theme — it's meant to read as night,
+     not as "dark mode of the chart", so it doesn't flip with prefers-color-scheme. */
+  .sky-bg { fill: #10162A; }
+  .sky-star { fill: #EAF1FF; }
+  @keyframes sky-twinkle { 0%, 100% { opacity: var(--dim); } 50% { opacity: var(--bright); } }
+  .sky-star.tw { animation: sky-twinkle 3.6s ease-in-out infinite; animation-delay: var(--d); }
+  @media (prefers-reduced-motion: reduce) { .sky-star.tw { animation: none; opacity: var(--bright); } }
 
   /* Six stats plus a full-width status: three rows of two, or two rows of three. */
   .review { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -688,10 +695,30 @@ if (nights.some(n => n.h != null)) {
   const SW = 320, SH = 78, top = 16, floor = 60, MAXH = 10;
   const bw = SW / nights.length;
   const yFor = h => floor - (Math.min(h, MAXH) / MAXH) * (floor - top);
+
+  // Small four-pointed sparkles (an SVG shape, not the emoji) scattered as a starfield.
+  // The sky is a fixed navy rect behind everything else — always dark regardless of the
+  // page's own theme, since it is standing in for actual night rather than a UI surface.
+  const starPts = (cx, cy, r) => [
+    [0, -1], [0.3, -0.3], [1, 0], [0.3, 0.3], [0, 1], [-0.3, 0.3], [-1, 0], [-0.3, -0.3],
+  ].map(([px, py]) => `${(cx + px * r).toFixed(1)},${(cy + py * r).toFixed(1)}`).join(" ");
+  let sky = `<rect class="sky-bg" x="0" y="0" width="${SW}" height="${SH}" rx="10"/>`;
+  for (let i = 0; i < 26; i++) {
+    const cx = Math.random() * SW, cy = Math.random() * (SH - 12) + 2;
+    const r = 1.1 + Math.random() * 1.6;
+    const dim = (0.25 + Math.random() * 0.25).toFixed(2), bright = (0.65 + Math.random() * 0.35).toFixed(2);
+    const tw = Math.random() < 0.55;
+    sky += `<polygon class="sky-star${tw ? " tw" : ""}" points="${starPts(cx, cy, r)}"
+      style="--dim:${dim};--bright:${bright};--d:${(Math.random() * 3.6).toFixed(1)}s"
+      opacity="${tw ? dim : bright}"/>`;
+  }
+
+  // Text and gridlines were tuned for the card surface; against a fixed-navy sky they need
+  // their own fixed-bright colours rather than the theme's --ink-2/--ink-3.
   let s = `<line x1="0" y1="${yFor(SLEEP_MIN)}" x2="${SW}" y2="${yFor(SLEEP_MIN)}"
-      stroke="var(--target)" stroke-width="1" stroke-dasharray="4 4"/>
+      stroke="rgba(234,241,255,0.45)" stroke-width="1" stroke-dasharray="4 4"/>
     <text x="0" y="${yFor(SLEEP_MIN) - 4}" text-anchor="start" font-size="8"
-      fill="var(--ink-3)">${SLEEP_MIN}h</text>`;
+      fill="rgba(234,241,255,0.7)">${SLEEP_MIN}h</text>`;
   nights.forEach((n, i) => {
     const cx = i * bw + bw / 2, w = Math.min(bw - 9, 22);
     const label = new Date(n.t).toLocaleDateString("en-GB", { weekday: "narrow" });
@@ -699,20 +726,20 @@ if (nights.some(n => n.h != null)) {
       const y = yFor(n.h);
       const short = n.h < SLEEP_MIN;
       s += `<rect x="${cx - w / 2}" y="${y}" width="${w}" height="${floor - y}" rx="3"
-          fill="${short ? "var(--warn-ink)" : "var(--accent)"}" opacity="${short ? 0.85 : 1}"/>
+          fill="${short ? "#E8B369" : "#5FCB86"}"/>
         <text x="${cx}" y="${y - 4}" text-anchor="middle" font-size="9"
-          font-family="IBM Plex Mono, monospace" fill="var(--ink-2)">${n.h.toFixed(1)}</text>`;
+          font-family="IBM Plex Mono, monospace" fill="#EAF1FF">${n.h.toFixed(1)}</text>`;
     } else {
       s += `<rect x="${cx - w / 2}" y="${floor - 3}" width="${w}" height="3" rx="1.5"
-        fill="var(--line)"/>`;
+        fill="rgba(234,241,255,0.3)"/>`;
     }
     s += `<text x="${cx}" y="${SH - 4}" text-anchor="middle" font-size="9"
-      fill="var(--ink-3)">${label}</text>`;
+      fill="rgba(234,241,255,0.7)">${label}</text>`;
   });
   strip.innerHTML = `<h3>Sleep stats</h3>
     <p class="note">Hours slept each of the last 7 nights. Amber is under ${SLEEP_MIN} h.</p>
     <svg viewBox="0 0 ${SW} ${SH}" role="img"
-      aria-label="Hours slept each of the last seven nights against a 7 hour target">${s}</svg>`;
+      aria-label="Hours slept each of the last seven nights against a 7 hour target">${sky}${s}</svg>`;
 }
 
 // ---- chart ----
