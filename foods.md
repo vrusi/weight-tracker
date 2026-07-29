@@ -53,6 +53,7 @@ Add new items as they come up.
 | Billa Proteinový sendvič (chicken steak, iceberg, tomato, cucumber, caper dressing) | 1 pack (~200 g) | 380 | 22 |
 | Le&Co Šunka vařená ve vlastní šťávě (98% meat, cooked ham) | 100 g | 110 | 19 |
 | Alpro Plant Protein yogurt alt., raspberry-strawberry (dairy-free) | 150 g pot | 90 | 10 |
+| Whole ham baguette w/ Lučina cream cheese spread (contains dairy) | 1 whole baguette | 810 | 36 |
 
 ## Notes
 - Creatine: 0 kcal. Effective dose is 3–5 g/day; more is excreted, causes GI upset, and adds intracellular water (inflates scale weight).
