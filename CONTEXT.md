@@ -104,9 +104,10 @@ after drinking often reads *artificially low*, and the rebound a day later looks
 isn't real. Carbs refill glycogen, which binds ~3 g water per gram. She has asked more than once
 "why did I gain" — the answer has always been water. Point her at the 7-day average.
 
-**Creatine.** She takes 30 g/day, deliberately, for brain health — that dose is inside the range
-used in cognitive research (muscle saturates at 3–5 g, the brain needs far more). It pulls water
-into muscle and inflates scale weight. That's the mechanism working, not fat.
+**Creatine.** She takes 15 g/day for brain health (discovered 2026-07-30 she'd been dosing 15 g
+all along, not the 30 g she'd intended — corrected here and in the 26 Jul log note). Still well
+inside the range used in cognitive research and far above the 3–5 g muscle saturates at. Pulls
+water into muscle and inflates scale weight — that's the mechanism working, not fat.
 
 **Apple Health double-counting.** Summing raw Active Energy samples adds every source together,
 while the Fitness Move ring deduplicates. With Strava and Heavy also writing, the sum read 1912
