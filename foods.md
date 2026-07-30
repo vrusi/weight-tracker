@@ -53,6 +53,7 @@ Add new items as they come up.
 | Chocolate-glazed donut w/ nut crumble | 1 donut (~100 g) | 380 | 6 |
 | Maraska Pelin & Tonik (wormwood liqueur + tonic, 7% vol) | 330 ml can | 190 | 0 |
 | Vindon Deluxe šunka (turkey ham, 1% fat, per label) | 100 g | 90 | 18 |
+| Le Coq Sex on the Beach alcoholic cocktail, orange (~250ml, ~7% vol) | 1 bottle | 190 | 0 |
 | dm Sportness L-Carnitine liquid | 25 ml | 1 | 0 |
 | Tuna fillet (~150 g) on leaf salad, sesame, citrus vinaigrette, 2 toast | 1 serving | 470 | 44 |
 | Billa Proteinový sendvič (chicken steak, iceberg, tomato, cucumber, caper dressing) | 1 pack (~200 g) | 380 | 22 |
