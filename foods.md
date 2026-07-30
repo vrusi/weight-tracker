@@ -48,6 +48,7 @@ Add new items as they come up.
 | Weider Premium EAA | 1 serving (~11 g) | 35 | 8 |
 | Tomato | 1 medium (~120 g) | 22 | 1 |
 | Carrot | 1 medium (~60 g) | 25 | 1 |
+| Apple | 1 medium (~180 g) | 95 | 0.5 |
 | dm Sportness L-Carnitine liquid | 25 ml | 1 | 0 |
 | Tuna fillet (~150 g) on leaf salad, sesame, citrus vinaigrette, 2 toast | 1 serving | 470 | 44 |
 | Billa Proteinový sendvič (chicken steak, iceberg, tomato, cucumber, caper dressing) | 1 pack (~200 g) | 380 | 22 |
