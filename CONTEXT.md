@@ -131,11 +131,16 @@ actually bound; the field must show a blue token, not a red type label.
 **Reading the pipeline.** Workflow runs are at github.com/vrusi/weight-tracker/actions. The job log
 prints the received `PAYLOAD`, which settles "did it send" versus "did it write" instantly.
 
-## 7. State as of 2026-07-26
+## 7. State as of 2026-07-31
 
-- Latest weigh-in **79.95 kg** (25 Jul); 26 Jul has food but no weight — she was away from her scale.
-- 7-day average **80.0 kg**, roughly **1 kg under** the target line. On track.
-- Activity tracking went live this day; 26 Jul is the first row with `active_kcal`.
+- Latest weigh-in **78.15 kg** (31 Jul). 1.5 kg ahead of the target line; recent weekly rate has
+  been running faster than the -0.46 kg/wk plan (around -1.3 to -1.7), which is why the status
+  pill has been reading "losing fast — eat a bit more" rather than "on track".
+- **On holiday this week with no scale.** Expect a run of food-only rows (weight column blank) —
+  that's correct, not a bug. Never fabricate a weight from feel/memory to fill the gap; a wrong
+  number corrupts the rolling average once a real one lands. `last`/`Current`/the journey bar will
+  all keep showing 78.15 kg dated 31 Jul until she weighs in again — that's expected staleness,
+  not broken data.
 - Volleyball is played with the watch off — it has to be added manually in Health
   (Browse → Activity → Workouts → Add Data) before the 22:30 sync, or written into a past row by hand.
   Roughly 200 kcal/h casual, 400 competitive indoor, 560 beach, at her weight.
