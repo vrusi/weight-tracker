@@ -55,6 +55,7 @@ Add new items as they come up.
 | Vindon Deluxe šunka (turkey ham, 1% fat, per label) | 100 g | 90 | 18 |
 | Le Coq Sex on the Beach alcoholic cocktail, orange (~250ml, ~7% vol) | 1 bottle | 190 | 0 |
 | 3-egg herb omelette + 2 grilled ham toast sandwiches + tomato/lettuce garnish + OJ | 1 breakfast plate | 745 | 36 |
+| Chicken kebab plate: grilled chicken, garlic white sauce, coleslaw, salad, ~half fries (contains dairy) | 1 plate | 970 | 53 |
 | dm Sportness L-Carnitine liquid | 25 ml | 1 | 0 |
 | Tuna fillet (~150 g) on leaf salad, sesame, citrus vinaigrette, 2 toast | 1 serving | 470 | 44 |
 | Billa Proteinový sendvič (chicken steak, iceberg, tomato, cucumber, caper dressing) | 1 pack (~200 g) | 380 | 22 |
