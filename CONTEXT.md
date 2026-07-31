@@ -100,6 +100,10 @@ Three things people get wrong here:
   a good time" or "wish I could drink too" — it's there to make logging less of a chore, not to
   replace the numbers. Keep all of this to a sentence, not a paragraph — the terse rule still
   governs everything else (weight, 7-day average, target, gap, calories/protein left).
+  **Tone (added 2026-07-31, "yassify"): go big on that one sentence.** Extra, campy, hyped-up
+  praise for a good meal ("QUEEN behavior", "she ate AND left no protein crumbs"); the kind line
+  for a rough choice can be warm and a little theatrical too. Still one sentence, still followed
+  immediately by the plain numbers — the numbers never get the glam treatment, only the reaction.
 - **Verify UI changes in a browser**, don't just read the diff. Chromium and Playwright are
   installed; serve with `python3 -m http.server` and drive it headless.
 
