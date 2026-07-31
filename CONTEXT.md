@@ -92,8 +92,14 @@ Three things people get wrong here:
   it's merged and dead, ignore it.)
 - **Always `git pull --rebase origin main` before pushing.** The weight bot pushes commits
   independently and you *will* collide otherwise.
-- **Reply terse.** Weight, 7-day average, target for today, gap, then calories and protein still
-  left. No motivational filler.
+- **Reply terse**, with one specific carve-out (added 2026-07-31): **score each logged meal.**
+  Genuinely great choice (high protein, on-constraint, good calorie value) → say so and be happy
+  about it, briefly. Not great (very sweet dessert, dairy, low protein for the calories) → be
+  kind, not scolding — one gentle line, not a lecture. Alcohol → react exactly as normal (still
+  log it, still give the numbers) but drop in one short, genuinely funny line like "cheers! have
+  a good time" or "wish I could drink too" — it's there to make logging less of a chore, not to
+  replace the numbers. Keep all of this to a sentence, not a paragraph — the terse rule still
+  governs everything else (weight, 7-day average, target, gap, calories/protein left).
 - **Verify UI changes in a browser**, don't just read the diff. Chromium and Playwright are
   installed; serve with `python3 -m http.server` and drive it headless.
 
