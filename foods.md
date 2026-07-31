@@ -57,6 +57,7 @@ Add new items as they come up.
 | 3-egg herb omelette + 2 grilled ham toast sandwiches + tomato/lettuce garnish + OJ | 1 breakfast plate | 745 | 36 |
 | Chicken kebab plate: grilled chicken, garlic white sauce, coleslaw, salad, ~half fries (contains dairy) | 1 plate | 970 | 53 |
 | Secco Rosato Frizzante (dry sparkling rosé, ~11% vol) | 200 ml | 140 | 0 |
+| Cuttlefish black tagliatelle (squid ink pasta, olive oil, parsley) | 1 plate | 720 | 33 |
 | dm Sportness L-Carnitine liquid | 25 ml | 1 | 0 |
 | Tuna fillet (~150 g) on leaf salad, sesame, citrus vinaigrette, 2 toast | 1 serving | 470 | 44 |
 | Billa Proteinový sendvič (chicken steak, iceberg, tomato, cucumber, caper dressing) | 1 pack (~200 g) | 380 | 22 |
