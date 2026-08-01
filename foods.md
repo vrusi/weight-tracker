@@ -59,6 +59,9 @@ Add new items as they come up.
 | Secco Rosato Frizzante (dry sparkling rosé, ~11% vol) | 200 ml | 140 | 0 |
 | Cuttlefish black tagliatelle (squid ink pasta, olive oil, parsley) | 1 plate | 720 | 33 |
 | 3-egg + ham omelette, no cheese, w/ arugula/tomato balsamic garnish | 1 omelette | 320 | 27 |
+| Vegan chocolate ice cream scoop | 1 scoop (~65 g) | 130 | 2 |
+| Orange-ginger sorbet scoop | 1 scoop (~65 g) | 90 | 0.5 |
+| Schweppes low-cal tonic | 250 ml | 20 | 0 |
 | dm Sportness L-Carnitine liquid | 25 ml | 1 | 0 |
 | Tuna fillet (~150 g) on leaf salad, sesame, citrus vinaigrette, 2 toast | 1 serving | 470 | 44 |
 | Billa Proteinový sendvič (chicken steak, iceberg, tomato, cucumber, caper dressing) | 1 pack (~200 g) | 380 | 22 |
