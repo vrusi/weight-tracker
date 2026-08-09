@@ -68,6 +68,7 @@ Add new items as they come up.
 | Apple, small | 1 fruit (~130 g) | 68 | 0.3 |
 | Kukuřízek (small fried corn cake) | 1 piece (~50 g) | 70 | 1.7 |
 | Protein bread w/ hummus | 1 slice + spread | 150 | 10 |
+| Vegan dark chocolate, 1 row (~25 g) | 1 row | 130 | 1 |
 | dm Sportness L-Carnitine liquid | 25 ml | 1 | 0 |
 | Tuna fillet (~150 g) on leaf salad, sesame, citrus vinaigrette, 2 toast | 1 serving | 470 | 44 |
 | Billa Proteinový sendvič (chicken steak, iceberg, tomato, cucumber, caper dressing) | 1 pack (~200 g) | 380 | 22 |
