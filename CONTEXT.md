@@ -132,16 +132,15 @@ actually bound; the field must show a blue token, not a red type label.
 **Reading the pipeline.** Workflow runs are at github.com/vrusi/weight-tracker/actions. The job log
 prints the received `PAYLOAD`, which settles "did it send" versus "did it write" instantly.
 
-## 7. State as of 2026-07-31
+## 7. State as of 2026-08-09
 
-- Latest weigh-in **78.15 kg** (31 Jul). 1.5 kg ahead of the target line; recent weekly rate has
-  been running faster than the -0.46 kg/wk plan (around -1.3 to -1.7), which is why the status
-  pill has been reading "losing fast — eat a bit more" rather than "on track".
-- **On holiday this week with no scale.** Expect a run of food-only rows (weight column blank) —
-  that's correct, not a bug. Never fabricate a weight from feel/memory to fill the gap; a wrong
-  number corrupts the rolling average once a real one lands. `last`/`Current`/the journey bar will
-  all keep showing 78.15 kg dated 31 Jul until she weighs in again — that's expected staleness,
-  not broken data.
+- **Back from the Croatia sailing trip.** 30 Jul – 8 Aug has patchy data by design — food-only
+  rows, some fully blank days, sleep gaps — all expected per the "no scale, hard to track on a
+  boat" conversation on 2026-08-02. Not data loss, not a bug.
+- First weigh-in since the trip: **79.85 kg** (9 Aug), almost exactly on the target line (~79.93
+  that day) — the pre-trip "losing too fast" streak self-corrected over the holiday rather than
+  needing active tightening. Treat the 7-day average as noisy for a few more days until it's
+  built back up from real trailing data rather than the pre-trip cluster.
 - Volleyball is played with the watch off — it has to be added manually in Health
   (Browse → Activity → Workouts → Add Data) before the 22:30 sync, or written into a past row by hand.
   Roughly 200 kcal/h casual, 400 competitive indoor, 560 beach, at her weight.
