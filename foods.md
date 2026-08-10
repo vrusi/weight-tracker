@@ -73,6 +73,8 @@ Add new items as they come up.
 | Kozel beer, canned | 500 ml | 215 | 2 |
 | Vegan meat, zucchini, broccoli, chickpeas over baked beans in tomato sauce | 1 bowl | 430 | 36 |
 | Chicken Hawaii kebab in tortilla (chicken, pineapple, white herb sauce; contains dairy) | 1 wrap | 565 | 46 |
+| Meruňkovice shot (apricot brandy, ~40ml, ~40% vol) | 1 shot | 90 | 0 |
+| Zelená shot (green herbal/mint liqueur, ~40ml, ~20% vol) | 1 shot | 75 | 0 |
 | dm Sportness L-Carnitine liquid | 25 ml | 1 | 0 |
 | Tuna fillet (~150 g) on leaf salad, sesame, citrus vinaigrette, 2 toast | 1 serving | 470 | 44 |
 | Billa Proteinový sendvič (chicken steak, iceberg, tomato, cucumber, caper dressing) | 1 pack (~200 g) | 380 | 22 |
