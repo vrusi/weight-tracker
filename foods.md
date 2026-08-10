@@ -72,6 +72,7 @@ Add new items as they come up.
 | Vegan meat, broccoli and zucchini stir-fry w/ crushed nut topping | 1 bowl | 445 | 28 |
 | Kozel beer, canned | 500 ml | 215 | 2 |
 | Vegan meat, zucchini, broccoli, chickpeas over baked beans in tomato sauce | 1 bowl | 430 | 36 |
+| Chicken Hawaii kebab in tortilla (chicken, pineapple, white herb sauce; contains dairy) | 1 wrap | 565 | 46 |
 | dm Sportness L-Carnitine liquid | 25 ml | 1 | 0 |
 | Tuna fillet (~150 g) on leaf salad, sesame, citrus vinaigrette, 2 toast | 1 serving | 470 | 44 |
 | Billa Proteinový sendvič (chicken steak, iceberg, tomato, cucumber, caper dressing) | 1 pack (~200 g) | 380 | 22 |
