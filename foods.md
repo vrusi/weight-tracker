@@ -77,7 +77,7 @@ Add new items as they come up.
 | Quarter grilled chicken + coleslaw + pickles | 1 plate | 680 | 52 |
 | Grilled sesame chicken strips, cabbage/carrot slaw, sweet chili dip, rice | 1 plate | 655 | 56 |
 | Birell Pomelo & Grep (non-alcoholic flavored beer) | 500 ml | 90 | 0 |
-| Burrito Loco chicken fajitas burrito (likely contains dairy - cheese/sour cream) | 1 burrito | 750 | 40 |
+| Burrito Loco chicken fajitas burrito, no sour cream | 1 burrito | 670 | 39 |
 | Zelená shot (green herbal/mint liqueur, ~40ml, ~20% vol) | 1 shot | 75 | 0 |
 | Kuřecí ražniči (chicken skewers) w/ grilled veg and baked potato wedges | 1 plate | 650 | 56 |
 | dm Sportness L-Carnitine liquid | 25 ml | 1 | 0 |
