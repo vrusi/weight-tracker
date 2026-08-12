@@ -74,6 +74,7 @@ Add new items as they come up.
 | Vegan meat, zucchini, broccoli, chickpeas over baked beans in tomato sauce | 1 bowl | 430 | 36 |
 | Chicken Hawaii kebab in tortilla (chicken, pineapple, white herb sauce; contains dairy) | 1 wrap | 565 | 46 |
 | Meruňkovice shot (apricot brandy, ~40ml, ~40% vol) | 1 shot | 90 | 0 |
+| Quarter grilled chicken + coleslaw + pickles | 1 plate | 680 | 52 |
 | Zelená shot (green herbal/mint liqueur, ~40ml, ~20% vol) | 1 shot | 75 | 0 |
 | Kuřecí ražniči (chicken skewers) w/ grilled veg and baked potato wedges | 1 plate | 650 | 56 |
 | dm Sportness L-Carnitine liquid | 25 ml | 1 | 0 |
