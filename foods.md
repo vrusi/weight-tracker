@@ -80,6 +80,8 @@ Add new items as they come up.
 | Burrito Loco chicken fajitas burrito, no sour cream | 1 burrito | 670 | 39 |
 | Magu Mystic Red kombucha | 330 ml | 45 | 0 |
 | Chicken leg (drumstick + thigh, bone-in) | 1 leg (~150 g meat) | 250 | 25 |
+| Chicken breast ham, 95% meat | 100 g | 98 | 20 |
+| Watermelon | 400 g | 120 | 2 |
 | Zelená shot (green herbal/mint liqueur, ~40ml, ~20% vol) | 1 shot | 75 | 0 |
 | Kuřecí ražniči (chicken skewers) w/ grilled veg and baked potato wedges | 1 plate | 650 | 56 |
 | dm Sportness L-Carnitine liquid | 25 ml | 1 | 0 |
