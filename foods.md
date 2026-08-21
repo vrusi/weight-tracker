@@ -85,6 +85,7 @@ Add new items as they come up.
 | Bún bò Nam Bộ (vermicelli, marinated beef, herbs, pickled veg, fried shallots) | 1 bowl | 600 | 42 |
 | Crocodille Tuňák a vejce sandwich (tuna, egg, parsley dressing) | 1 pack | 280 | 16 |
 | Monster Viking Berry | 1 can (500 ml) | 210 | 0 |
+| Protein croissant w/ hummus, basil and lemon filling | 1 croissant | 420 | 21 |
 | Zelená shot (green herbal/mint liqueur, ~40ml, ~20% vol) | 1 shot | 75 | 0 |
 | Kuřecí ražniči (chicken skewers) w/ grilled veg and baked potato wedges | 1 plate | 650 | 56 |
 | dm Sportness L-Carnitine liquid | 25 ml | 1 | 0 |
