@@ -88,6 +88,8 @@ Add new items as they come up.
 | Protein croissant w/ hummus, basil and lemon filling | 1 croissant | 420 | 21 |
 | Spaghetti w/ beef mince and jarred tomato sauce (generous portion) | 1 plate | 920 | 66 |
 | White wine | 100 ml | 85 | 0 |
+| Vegan tofu/veg vermicelli stir-fry, full plate | 1 plate | 670 | 29 |
+| Jam-filled šiška (fried yeast dough, powdered sugar) | 1 piece | 280 | 4 |
 | Zelená shot (green herbal/mint liqueur, ~40ml, ~20% vol) | 1 shot | 75 | 0 |
 | Kuřecí ražniči (chicken skewers) w/ grilled veg and baked potato wedges | 1 plate | 650 | 56 |
 | dm Sportness L-Carnitine liquid | 25 ml | 1 | 0 |
