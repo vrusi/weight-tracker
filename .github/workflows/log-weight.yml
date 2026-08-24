@@ -37,13 +37,45 @@ jobs:
         run: python3 scripts/log_weight.py
 
       - name: Commit and push if changed
+        env:
+          PAYLOAD: ${{ toJSON(github.event.client_payload) }}
+          WEIGHT: ${{ github.event.inputs.weight }}
+          ACTIVE: ${{ github.event.inputs.active }}
+          DATE: ${{ github.event.inputs.date }}
         run: |
           git config user.name "weight-bot"
           git config user.email "29240026+vrusi@users.noreply.github.com"
           git add log.csv
           if git diff --cached --quiet; then
             echo "No change."
-          else
-            git commit -m "log: via Apple Health"
-            git push
+            exit 0
           fi
+          git commit -m "log: via Apple Health"
+
+          # Two automations firing close together (e.g. weight + sleep run back-to-back)
+          # both get pinned to the same starting commit by actions/checkout, since it
+          # resolves the ref when the dispatch is *received*, not when the job *starts*.
+          # concurrency: only stops them running in parallel — it does not refresh that
+          # stale ref, so the second push is still rejected once the first has landed.
+          # Rather than git-rebase the raw diff (risky: both runs can touch the very same
+          # CSV row for the same day), redo the upsert itself against the fresh file —
+          # log_weight.py only ever writes the columns it was given, so re-running it is
+          # safe and merges cleanly no matter which column each run is updating.
+          for attempt in 1 2 3 4 5; do
+            if git push; then
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt) — resetting onto the new tip and reapplying."
+            git fetch origin main
+            git reset --hard origin/main
+            python3 scripts/log_weight.py
+            git add log.csv
+            if git diff --cached --quiet; then
+              echo "No longer any change after reapplying — another run already recorded this."
+              exit 0
+            fi
+            git commit -m "log: via Apple Health"
+            sleep $((attempt))
+          done
+          echo "::error::Failed to push after 5 attempts."
+          exit 1
