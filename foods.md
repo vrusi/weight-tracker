@@ -93,6 +93,8 @@ Add new items as they come up.
 | Alpro Plant Protein pudding, chocolate (dairy-free) | 1 pot (~125 g) | 130 | 9 |
 | Poppy seed sweet bun, powdered sugar | 1 bun (~130 g) | 400 | 8 |
 | Coffee w/ milk | 1 mug | 60 | 1 |
+| Merci chocolate praline | 1 piece (~11 g) | 55 | 0.7 |
+| Peach (broskyňa) | 1 medium (~150 g) | 60 | 1.4 |
 | Zelená shot (green herbal/mint liqueur, ~40ml, ~20% vol) | 1 shot | 75 | 0 |
 | Kuřecí ražniči (chicken skewers) w/ grilled veg and baked potato wedges | 1 plate | 650 | 56 |
 | dm Sportness L-Carnitine liquid | 25 ml | 1 | 0 |
