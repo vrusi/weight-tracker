@@ -107,6 +107,11 @@ Three things people get wrong here:
   immediately by the plain numbers — the numbers never get the glam treatment, only the reaction.
 - **Verify UI changes in a browser**, don't just read the diff. Chromium and Playwright are
   installed; serve with `python3 -m http.server` and drive it headless.
+- **Never assume "today" from the last log.csv row or session context — verify with a real
+  clock before logging** (added 2026-08-25, she caught a meal logged a day late). A long
+  session's date context goes stale; the last row can be yesterday's if she hasn't logged yet
+  today, or already today's if she has. Run `TZ=Europe/Bratislava date` (or equivalent) to get
+  the actual date before creating or amending a row — don't infer it.
 
 ## 6. Gotchas learned the hard way
 
