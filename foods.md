@@ -97,6 +97,7 @@ Add new items as they come up.
 | Peach (broskyňa) | 1 medium (~150 g) | 60 | 1.4 |
 | Food for Future organic soy milk (dairy-free) | 250 ml | 100 | 8 |
 | dm Sportness vegan vanilla protein shake powder | 1 scoop (~30 g) | 111 | 21 |
+| Kuřecí Švej-Ču-Žou (chicken in sauce) + hranolky, half eaten | 1 plate | 605 | 63 |
 | Zelená shot (green herbal/mint liqueur, ~40ml, ~20% vol) | 1 shot | 75 | 0 |
 | Kuřecí ražniči (chicken skewers) w/ grilled veg and baked potato wedges | 1 plate | 650 | 56 |
 | dm Sportness L-Carnitine liquid | 25 ml | 1 | 0 |
