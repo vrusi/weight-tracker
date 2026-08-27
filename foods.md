@@ -99,6 +99,7 @@ Add new items as they come up.
 | dm Sportness vegan vanilla protein shake powder | 1 scoop (~30 g) | 111 | 21 |
 | Kuřecí Švej-Ču-Žou (chicken in sauce) + hranolky, half eaten | 1 plate | 605 | 63 |
 | Roasted chicken leg, red onion, braised red cabbage, carrot sticks, gherkins | 1 plate | 480 | 44 |
+| Quarter roasted chicken, skin-on | 1 quarter (~300 g) | 500 | 55 |
 | Zelená shot (green herbal/mint liqueur, ~40ml, ~20% vol) | 1 shot | 75 | 0 |
 | Kuřecí ražniči (chicken skewers) w/ grilled veg and baked potato wedges | 1 plate | 650 | 56 |
 | dm Sportness L-Carnitine liquid | 25 ml | 1 | 0 |
