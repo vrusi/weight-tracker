@@ -103,6 +103,12 @@ Add new items as they come up.
 | SON LAM kẹo vừng lạc (Vietnamese peanut sesame candy) | 1 piece (~25 g) | 115 | 2.5 |
 | Řezníkův talíř Mistrovská šunka, 98% meat | 100 g | 92 | 19 |
 | Plain butter croissant (contains dairy) | 1 croissant | 230 | 5 |
+| Phở bò (beef pho), restaurant bowl | 1 bowl | 450 | 35 |
+| Meruňková šiška (apricot-filled fried yeast bun) | 1 piece | 280 | 4 |
+| Protein vanilla soy milk, glass | ~200 ml | 80 | 6 |
+| Twister nanuk (fruit ice lolly) | 1 small (~80 ml) | 75 | 0 |
+| Červené zelí v sladkokyselém nálevu (pickled red cabbage) | 1 portion (~100 g) | 50 | 1 |
+| Pistachios | 1 small handful (~20 g) | 115 | 4 |
 | Zelená shot (green herbal/mint liqueur, ~40ml, ~20% vol) | 1 shot | 75 | 0 |
 | Kuřecí ražniči (chicken skewers) w/ grilled veg and baked potato wedges | 1 plate | 650 | 56 |
 | dm Sportness L-Carnitine liquid | 25 ml | 1 | 0 |
