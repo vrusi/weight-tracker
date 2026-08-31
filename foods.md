@@ -109,6 +109,7 @@ Add new items as they come up.
 | Twister nanuk (fruit ice lolly) | 1 small (~80 ml) | 75 | 0 |
 | Červené zelí v sladkokyselém nálevu (pickled red cabbage) | 1 portion (~100 g) | 50 | 1 |
 | Pistachios | 1 small handful (~20 g) | 115 | 4 |
+| Pfanner Bio ginger shot | 1 shot (~60 ml) | 35 | 0.2 |
 | Zelená shot (green herbal/mint liqueur, ~40ml, ~20% vol) | 1 shot | 75 | 0 |
 | Kuřecí ražniči (chicken skewers) w/ grilled veg and baked potato wedges | 1 plate | 650 | 56 |
 | dm Sportness L-Carnitine liquid | 25 ml | 1 | 0 |
