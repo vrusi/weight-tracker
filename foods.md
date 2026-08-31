@@ -114,6 +114,7 @@ Add new items as they come up.
 | Stuffed green pepper and stuffed onions (Beyond Meat, rice, tomato sauce) | 1 plate | 460 | 22 |
 | Stuffed green pepper alone (Beyond Meat, rice, tomato sauce) | 1 pepper | 280 | 14 |
 | Albertova Tržnice mrkvový salát s ananasem (carrot pineapple salad) | 350 g pack | 350 | 2.5 |
+| Vanilla protein vegan milk | 250 ml | 110 | 9 |
 | Zelená shot (green herbal/mint liqueur, ~40ml, ~20% vol) | 1 shot | 75 | 0 |
 | Kuřecí ražniči (chicken skewers) w/ grilled veg and baked potato wedges | 1 plate | 650 | 56 |
 | dm Sportness L-Carnitine liquid | 25 ml | 1 | 0 |
