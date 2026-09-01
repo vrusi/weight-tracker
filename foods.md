@@ -9,6 +9,7 @@ Add new items as they come up.
 | Organis vegan protein, chocolate | 1 scoop (~30 g) | 120 | 20 |
 | Lifefood Lifebar protein, hazelnut | 1 bar (~47 g) | 220 | 10 |
 | Emco protein stick, chocolate & almond ("orechy protein cokolada a mandle") | 1 stick (~45 g) | 175 | 10 |
+| Emco protein stick, coconut & almond ("orechy protein kokos a mandle") | 1 stick (~45 g) | 180 | 10 |
 | Billa protein sandwich | 1 pack | 350 | 25 |
 | Monster Energy | 1 can (500 ml) | 210 | 0 |
 | Norwegian salmon plate (200 g) w/ potato & green pea puree, salad | 1 serving | 700 | 40 |
