@@ -126,6 +126,8 @@ Add new items as they come up.
 | Whole ham baguette w/ Lučina cream cheese spread (contains dairy) | 1 whole baguette | 810 | 36 |
 | DrWitt Collagen water, strawberry | 750 ml bottle | 15 | 0* |
 | Wojnar's Schinken Käse sandwich (ham, cheese, pickle, white bread; contains dairy) | 1 pack | 380 | 15 |
+| Grilled/glazed chicken leg drumstick | 1 leg (~150 g) | 250 | 25 |
+| Billa Ready To Go Salát z perlového kuskusu, sušené švestky, mangová omáčka, hummus | ~200 g pack | 390 | 9 |
 
 ## Notes
 - Creatine: 0 kcal. Effective dose is 3–5 g/day; more is excreted, causes GI upset, and adds intracellular water (inflates scale weight).
